@@ -3,3 +3,12 @@
 // See: https://v2.tauri.app/start/frontend/sveltekit/ for more info
 export const prerender = true;
 export const ssr = false;
+
+export interface SliderConfig {
+  id: string;
+  label: string;
+  min: number;
+  max: number;
+  default: number;
+  value: number;
+}
