@@ -25,12 +25,18 @@
     { id: '2', type: 'slider', label: 'Steer gain', min: 0, max: 100, default: 30, value: 30, step: 1, help: 'Steering sensitivity. Higher values make the car turn more aggressively.' },
     { id: '3', type: 'slider', label: 'Centering gain', min: 0, max: 1.5, default: 0.2, value: 0.2, step: 0.1, help: 'How strongly the car corrects its position toward the center of the track.' },
     { id: '4', type: 'slider', label: 'Brake threshold', min: 0, max: 1.2, default: 0.9, value: 0.9, step: 0.1, help: 'Angle threshold for braking. Lower values brake earlier.' },
-    { id: '5', type: 'multi-slider', label: 'Gear Speeds', min: 0, max: 300, default: 40, value: 40, default2: 80, value2: 80, default3: 150, value3: 150, default4: 220, value4: 220, default5: 300, value5: 300, step: 1, help: 'Speed thresholds for gear shifting.' },
+    { id: '5', type: 'multi-slider', label: 'Gear Thresholds', min: 0, max: 300, default: 40, value: 40, default2: 80, value2: 80, default3: 150, value3: 150, default4: 220, value4: 220, default5: 300, value5: 300, step: 1, help: 'Speed thresholds for gear shifting.' },
     { id: '6', type: 'switch', label: 'Traction control', default: true,  value: true, help: 'Toggle traction control system.' },
   ]);
 
   function handleReset(index: number) {
     sliders[index].value = sliders[index].default;
+    if (sliders[index].type=="multi-slider") {
+      sliders[index].value2 = sliders[index].default2;
+      sliders[index].value3 = sliders[index].default3;
+      sliders[index].value4 = sliders[index].default4;
+      sliders[index].value5 = sliders[index].default5;
+    }
   }
 </script>
 
@@ -79,60 +85,33 @@
               <span class="help-icon" data-tooltip={slider.help}>?</span>
             </div>
             <div class="multi-values">
-              {slider.value } | {slider.value2} | {slider.value3} | {slider.value4} | {slider.value5}
+              {slider.value} | {slider.value2} | {slider.value3} | {slider.value4} | {slider.value5}
             </div>
           </header>
           
           <div class="multi-slider-container">
-            <div class="slider-track"></div>
-            <input 
-              type="range" 
-              bind:value={slider.value} 
-              min={slider.min} 
-              max={slider.value2}
-              step={slider.step}
-              class="thumb thumb-1"
-            />
-            <input 
-              type="range" 
-              bind:value={slider.value2} 
-              min={slider.value} 
-              max={slider.value3}
-              step={slider.step}
-              class="thumb thumb-1"
-            />
-            <input 
-              type="range" 
-              bind:value={slider.value3} 
-              min={slider.value2} 
-              max={slider.value4}
-              step={slider.step}
-              class="thumb thumb-2"
-            />
-            <input 
-              type="range" 
-              bind:value={slider.value4} 
-              min={slider.value3} 
-              max={slider.value5}
-              step={slider.step}
-              class="thumb thumb-3"
-            />
-            <input 
-              type="range" 
-              bind:value={slider.value5} 
-              min={slider.value4} 
-              max={slider.max}
-              step={slider.step}
-              class="thumb thumb-4"
-            />
-          </div>
-
-          <button onclick={() => {
-            slider.value2 = slider.default2;
-            slider.value3 = slider.default3;
-            slider.value4 = slider.default4;
-            slider.value5 = slider.default5;
-          }}>Reset</button>
+            {#each [
+              {v: 'value'},
+              {v: 'value2'},
+              {v: 'value3'},
+              {v: 'value4'},
+              {v: 'value5'}
+            ] as thumb}
+              <div class="input-wrapper">
+              <span class="limit">{slider.min}</span>
+              <input 
+                type="range" 
+                bind:value={slider[thumb.v]} 
+                min={Number(slider.min)} 
+                max={Number(slider.max)}
+                step={slider.step}
+                class="range-input"
+              />
+              <span class="limit">{slider.max}</span>
+            </div>
+            {/each}
+        <button onclick={() => handleReset(i)}>Reset</button>
+        </div>
         </div>
       {/if}
 
@@ -143,7 +122,7 @@
               <span class="label">{slider.label}</span>
               <span class="help-icon" data-tooltip={slider.help}>?</span>
             </div>
-            <span>{slider.value ? 'ON' : 'OFF'}</span>
+            <!-- <span>{slider.value ? 'ON' : 'OFF'}</span> -->
           </header>
 
           <div class="input-wrapper radio-buttons">
@@ -189,9 +168,9 @@
 
 /* Responsive Grid: 3 columns on desktop, 2 on tablet, 1 on mobile */
 .slider-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+display: grid;
+gap: 1.5rem;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .slider-card {
@@ -261,7 +240,9 @@ header {
 .multi-slider-container {
   position: relative;
   height: 30px;
+  gap: 0.75rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
