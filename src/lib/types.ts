@@ -17,3 +17,12 @@ export interface SliderConfig {
   type: string;
   help: string;
 }
+
+export interface DriverParams {
+  target_speed: number;
+  steer_gain: number;
+  centering_gain: number;
+  brake_threshold: number;
+  gear_thresholds: number[];
+  traction_control: boolean;
+}

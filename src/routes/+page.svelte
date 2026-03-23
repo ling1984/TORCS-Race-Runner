@@ -1,22 +1,50 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
-  import type { SliderConfig } from '$lib/types';
+  import type { SliderConfig, DriverParams } from '$lib/types';
 
   let team_name = $state("");
   let msg = $state("");
-  let running = false;
+  let running = $state(false);
+
+  function collectParams(): DriverParams {
+    return {
+      target_speed: sliders[0].value as number,
+      steer_gain: sliders[1].value as number,
+      centering_gain: sliders[2].value as number,
+      brake_threshold: sliders[3].value as number,
+      gear_thresholds: [
+        0, // 1st gear is always 0
+        sliders[4].value as number,
+        sliders[4].value2 as number,
+        sliders[4].value3 as number,
+        sliders[4].value4 as number,
+        sliders[4].value5 as number,
+      ],
+      traction_control: sliders[5].value as boolean,
+    };
+  }
 
   async function handle_run_clicked(event: Event) {
     event.preventDefault();
     if (!running) {
-      msg = await invoke("start_racer");
-      msg = "Started";
-      running = true;
+      try {
+        const params = collectParams();
+        await invoke("handle_params", { params });
+        msg = await invoke("start_racer");
+        msg = "Started";
+        running = true;
+      } catch (error) {
+        msg = `Error: ${error}`;
+      }
     } 
     else {
-      msg = await invoke("stop_racer");
-      msg = "Stopped";
-      running = false;
+      try {
+        msg = await invoke("stop_racer");
+        msg = "Stopped";
+        running = false;
+      } catch (error) {
+        msg = `Error: ${error}`;
+      }
     }
   }
   // Initialize your 6 sliders
@@ -45,7 +73,7 @@
 
   <form class="row" onsubmit={handle_run_clicked}>
     <input id="target-input" placeholder="Enter your team name..." bind:value={team_name} />
-    <button type="submit">Run</button>
+    <button class="btn-drive" type="submit">{running ? 'Stop driver' : 'Start driver'}</button>
   </form>
   <p>{msg}</p>
 
