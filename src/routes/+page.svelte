@@ -2,8 +2,8 @@
   import { invoke } from "@tauri-apps/api/core";
   import type { SliderConfig } from '$lib/types';
 
-  let target_speed = $state("");
-  let msg = $state("Waiting...");
+  let team_name = $state("");
+  let msg = $state("");
   let running = false;
 
   async function handle_run_clicked(event: Event) {
@@ -25,7 +25,7 @@
     { id: '2', type: 'slider', label: 'Steer gain', min: 0, max: 100, default: 30, value: 30, step: 1, help: 'Steering sensitivity. Higher values make the car turn more aggressively.' },
     { id: '3', type: 'slider', label: 'Centering gain', min: 0, max: 1.5, default: 0.2, value: 0.2, step: 0.1, help: 'How strongly the car corrects its position toward the center of the track.' },
     { id: '4', type: 'slider', label: 'Brake threshold', min: 0, max: 1.2, default: 0.9, value: 0.9, step: 0.1, help: 'Angle threshold for braking. Lower values brake earlier.' },
-    { id: '5', type: 'multi-slider', label: 'Gear Thresholds', min: 0, max: 300, default: 40, value: 40, default2: 80, value2: 80, default3: 150, value3: 150, default4: 220, value4: 220, default5: 300, value5: 300, step: 1, help: 'Speed thresholds for gear shifting.' },
+    { id: '5', type: 'multi-slider', label: 'Gear thresholds', min: 0, max: 300, default: 40, value: 40, default2: 80, value2: 80, default3: 150, value3: 150, default4: 220, value4: 220, default5: 300, value5: 300, step: 1, help: 'Speed thresholds for gear shifting.' },
     { id: '6', type: 'switch', label: 'Traction control', default: true,  value: true, help: 'Toggle traction control system.' },
   ]);
 
@@ -41,10 +41,10 @@
 </script>
 
 <main class="container">
-  <h1>Start your racer</h1>
+  <h1>TORCS Race Runner</h1>
 
   <form class="row" onsubmit={handle_run_clicked}>
-    <input id="target-input" placeholder="Enter a target speed..." bind:value={target_speed} />
+    <input id="target-input" placeholder="Enter your team name..." bind:value={team_name} />
     <button type="submit">Run</button>
   </form>
   <p>{msg}</p>
@@ -84,21 +84,22 @@
               <span class="label">{slider.label}</span>
               <span class="help-icon" data-tooltip={slider.help}>?</span>
             </div>
-            <div class="multi-values">
+            <!-- <div class="multi-values">
               {slider.value} | {slider.value2} | {slider.value3} | {slider.value4} | {slider.value5}
-            </div>
+            </div> -->
           </header>
           
           <div class="multi-slider-container">
             {#each [
-              {v: 'value'},
-              {v: 'value2'},
-              {v: 'value3'},
-              {v: 'value4'},
-              {v: 'value5'}
+              {v: 'value', gear_change: '2nd'},
+              {v: 'value2', gear_change: '3rd'},
+              {v: 'value3', gear_change: '4th'},
+              {v: 'value4', gear_change: '5th'},
+              {v: 'value5', gear_change: '6th'}
             ] as thumb}
               <div class="input-wrapper">
-              <span class="limit">{slider.min}</span>
+              <span class="multi-values">{thumb.gear_change}</span>
+              <!-- <span class="limit">{slider.min}</span> -->
               <input 
                 type="range" 
                 bind:value={slider[thumb.v]} 
@@ -107,11 +108,12 @@
                 step={slider.step}
                 class="range-input"
               />
-              <span class="limit">{slider.max}</span>
+              <!-- <span class="limit">{slider.max}</span> -->
+              <span class="value">{slider[thumb.v]}</span>
             </div>
             {/each}
-        <button onclick={() => handleReset(i)}>Reset</button>
-        </div>
+          </div>
+          <button onclick={() => handleReset(i)}>Reset</button>
         </div>
       {/if}
 
@@ -181,6 +183,12 @@ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   flex-direction: column;
   gap: 1rem;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  min-height: fit-content;
+  align-items: stretch;
+}
+
+.value {
+  min-width: 3ch;
 }
 
 header {
@@ -239,11 +247,10 @@ header {
 
 .multi-slider-container {
   position: relative;
-  height: 30px;
   gap: 0.75rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 }
 
 .slider-track {
