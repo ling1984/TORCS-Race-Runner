@@ -112,9 +112,6 @@
               <span class="label">{slider.label}</span>
               <span class="help-icon" data-tooltip={slider.help}>?</span>
             </div>
-            <!-- <div class="multi-values">
-              {slider.value} | {slider.value2} | {slider.value3} | {slider.value4} | {slider.value5}
-            </div> -->
           </header>
           
           <div class="multi-slider-container">
@@ -126,7 +123,7 @@
               {v: 'value5', gear_change: '6th'}
             ] as thumb}
               <div class="input-wrapper">
-              <span class="multi-values">{thumb.gear_change}</span>
+              <span class="limit">{thumb.gear_change}</span>
               <!-- <span class="limit">{slider.min}</span> -->
               <input 
                 type="range" 
@@ -170,6 +167,26 @@
         </div>
       {/if}
     {/each}
+    <div class="slider-card">
+    <header>
+            <div class="label-container">
+              <span class="label">Team details</span>
+              <span class="help-icon" data-tooltip="Input your team name and choose your team colour.">?</span>
+            </div>
+            <!-- <span>{slider.value ? 'ON' : 'OFF'}</span> -->
+          </header>
+
+    </div>
+    <div class="slider-card">
+    <header>
+            <div class="label-container">
+              <span class="label">Team logo</span>
+              <span class="help-icon" data-tooltip="Upload your team logo.">?</span>
+            </div>
+            <!-- <span>{slider.value ? 'ON' : 'OFF'}</span> -->
+          </header>
+      
+    </div>
   </div>
 </main>
 
@@ -189,7 +206,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  --line: #444;
+  --limit: #4a4a4a;
+  --button-background: #888;
+  --help-border:rgb(91, 91, 91);
+  --help-icon-background: #4c4c4c;
+  --help-icon-colour: white;
 }
+
 .container {
   padding: 2rem;
   max-width: 1200px;
@@ -204,7 +228,7 @@ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .slider-card {
-  background: #2a2a2a;
+  background: var(--background);
   padding: 1.5rem;
   border-radius: 8px;
   display: flex;
@@ -217,13 +241,14 @@ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 
 .value {
   min-width: 3ch;
+  font-weight: bold;
 }
 
 header {
   display: flex;
   justify-content: space-between;
   font-weight: bold;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid var(--line);
   padding-bottom: 0.5rem;
 }
 
@@ -235,13 +260,13 @@ header {
 .help-icon {
   margin-left: 0.5rem;
   cursor: default;
-  color: white;
+  color: var(--help-colour, white);
   font-size: 0.7rem;
   width: 1rem;
   height: 1rem;
   border-radius: 50%;
-  background: #444;
-  border: 1px solid #666;
+  background: var(--button-background);
+  border: 1px solid var(--help-border);
   display: flex;
   align-items: center;
   justify-content: center;  position: relative;
@@ -253,8 +278,8 @@ header {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: #333;
-  color: white;
+  background: var(--help-icon-background);
+  color: var(--help-icon-colour, white);
   padding: 0.75rem 1rem;
   border-radius: 6px;
   font-size: 1rem;
@@ -266,11 +291,6 @@ header {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   text-align: center;
   pointer-events: none;
-}
-
-.multi-values {
-  font-size: 0.9rem;
-  color: #aaa;
 }
 
 .multi-slider-container {
@@ -351,7 +371,7 @@ header {
   position: relative;
   display: inline-block;
   padding: 0.5rem 1rem;
-  background: #444;
+  background: var(--button-background);
   color: white;
   border: 2px solid transparent;
   border-radius: 4px;
@@ -403,8 +423,8 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .limit {
-  font-size: 0.8rem;
-  color: #888;
+  font-size: 0.9rem;
+  color: var(--limit);
   min-width: 20px;
 }
 
@@ -479,12 +499,17 @@ button {
   :root {
     color: #f6f6f6;
     background-color: #2f2f2f;
+    --limit: #dedede;
+    --button-background: #444;
   }
 
   input,
   button {
-    color: #ffffff;
+    color: #fff;
     background-color: #0f0f0f98;
+    --help-border:rgb(37, 37, 37);
+    --help-icon-background: #a71212;
+    --help-icon-colour: white;
   }
   button:active {
     background-color: #0f0f0f69;
