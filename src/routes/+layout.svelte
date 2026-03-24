@@ -19,15 +19,25 @@
 <slot></slot>
 
 <style>
-  .header {
+.header {
+    /* position: sticky; when it can behave itself, it can come back to being sticky.
+    issues:
+    1. it is see through on light mode
+    2. help icons and tooltips appear above it
+    3. header height at top is slightly larger than height when scrolling */
+    top: 0;
+    overflow: visible;
+    width: 100%;
+    box-sizing: border-box;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     padding: 1.5rem 2rem;
     background: var(--background);
     border-bottom: 1px solid var(--line);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+}
 
   h1 {
     margin: 0;

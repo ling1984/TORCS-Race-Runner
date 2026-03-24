@@ -180,11 +180,10 @@
     <header>
             <div class="label-container">
               <span class="label">Team logo</span>
-              <span class="help-icon" data-tooltip="Upload your team logo.">?</span>
+              <span class="help-icon" data-tooltip="Upload your team logo. TODO: Add more information about size and aspect ratio">?</span>
             </div>
-            <!-- <span>{slider.value ? 'ON' : 'OFF'}</span> -->
           </header>
-      
+      <button onclick={() => team_name = ""}>Find your logo file</button>
     </div>
   </div>
 </main>
