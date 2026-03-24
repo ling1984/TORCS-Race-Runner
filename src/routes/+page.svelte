@@ -1,10 +1,15 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
   import type { SliderConfig, DriverParams } from '$lib/types';
+  import { running, onStartDriver } from '$lib/stores';
+  import { get } from 'svelte/store';
 
   let team_name = $state("");
   let msg = $state("");
-  let running = $state(false);
+
+  $effect(() => {
+    onStartDriver.set(handle_start_driver_clicked);
+  });
 
   function collectParams(): DriverParams {
     return {
@@ -21,18 +26,20 @@
         sliders[4].value5 as number,
       ],
       traction_control: sliders[5].value as boolean,
+      team_name: team_name,
     };
   }
 
-  async function handle_run_clicked(event: Event) {
+  async function handle_start_driver_clicked(event: Event) {
     event.preventDefault();
-    if (!running) {
+    const currentRunning = await new Promise(resolve => running.subscribe(resolve)());
+    if (!currentRunning) {
       try {
         const params = collectParams();
         await invoke("handle_params", { params });
         msg = await invoke("start_racer");
         msg = "Started";
-        running = true;
+        running.set(true);
       } catch (error) {
         msg = `Error: ${error}`;
       }
@@ -41,7 +48,7 @@
       try {
         msg = await invoke("stop_racer");
         msg = "Stopped";
-        running = false;
+        running.set(false);
       } catch (error) {
         msg = `Error: ${error}`;
       }
@@ -69,14 +76,6 @@
 </script>
 
 <main class="container">
-  <h1>TORCS Race Runner</h1>
-
-  <form class="row" onsubmit={handle_run_clicked}>
-    <input id="target-input" placeholder="Enter your team name..." bind:value={team_name} />
-    <button class="btn-drive" type="submit">{running ? 'Stop driver' : 'Start driver'}</button>
-  </form>
-  <p>{msg}</p>
-
   <div class="slider-grid">
     {#each sliders as slider, i}
       {#if slider.type=='slider'}
@@ -170,12 +169,12 @@
     <div class="slider-card">
     <header>
             <div class="label-container">
-              <span class="label">Team details</span>
-              <span class="help-icon" data-tooltip="Input your team name and choose your team colour.">?</span>
+              <span class="label">Team name</span>
+              <span class="help-icon" data-tooltip="Choose your team name.">?</span>
             </div>
-            <!-- <span>{slider.value ? 'ON' : 'OFF'}</span> -->
           </header>
-
+          <input id="target-input" autocomplete="off" placeholder="Enter your team name..." bind:value={team_name} />
+          <button onclick={() => team_name = ""}>Reset</button>
     </div>
     <div class="slider-card">
     <header>
@@ -212,6 +211,7 @@
   --help-border:rgb(91, 91, 91);
   --help-icon-background: #3c3c3c;
   --help-icon-colour: white;
+  --slider-card-background: #f6f6f6;
 }
 
 .container {
@@ -228,7 +228,7 @@ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .slider-card {
-  background: var(--background);
+  background: var(--slider-card-background);
   padding: 1.5rem;
   border-radius: 8px;
   display: flex;
@@ -444,16 +444,10 @@ button:hover {
 
 .container {
   margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.row {
-  display: flex;
-  justify-content: center;
+  padding: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 h1 {
@@ -501,6 +495,7 @@ button {
     background-color: #2f2f2f;
     --limit: #dedede;
     --button-background: #444;
+    --slider-card-background: #2b2a2a98;
   }
 
   input,
