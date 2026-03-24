@@ -210,7 +210,7 @@
   --limit: #4a4a4a;
   --button-background: #888;
   --help-border:rgb(91, 91, 91);
-  --help-icon-background: #4c4c4c;
+  --help-icon-background: #3c3c3c;
   --help-icon-colour: white;
 }
 
