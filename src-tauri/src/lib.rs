@@ -26,6 +26,23 @@ fn handle_params(params: DriverParams, state: State<DriverState>) -> Result<(), 
     Ok(())
 }
 
+fn start_wtorcs() -> Result<(), String> {
+    // Start wtorcs.exe using Command
+    // we need to be in the "torcs" directory first...
+    let exe_dir = std::env::current_exe()
+        .expect("can't get exe path")
+        .parent()
+        .expect("exe has no parent")
+        .to_path_buf();
+    let wtorcs_dir = exe_dir.join("torcs");
+    println!("Starting wtorcs.exe in directory: {:?}", wtorcs_dir);
+    Command::new("wtorcs.exe")
+        .current_dir(&wtorcs_dir)
+        .spawn()
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 #[tauri::command]
 fn start_racer(state: State<DriverState>) -> Result<(), String> {    
     // Get the current driver process if it exists
@@ -59,6 +76,11 @@ fn start_racer(state: State<DriverState>) -> Result<(), String> {
         }
     }
     println!("Logo path is {:?}", *logo_path_guard);
+
+    // -- Start wtorcs.exe --
+    start_wtorcs()?;
+
+    // -- Start the driver script with parameters --
 
     // Serialize parameters to JSON
     let params_json = serde_json::to_string(params)

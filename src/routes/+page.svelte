@@ -1,8 +1,9 @@
 <script lang="ts">
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
-  import { open } from "@tauri-apps/plugin-dialog";
+  import { open, message } from "@tauri-apps/plugin-dialog";
   import type { SliderConfig, DriverParams } from '$lib/types';
   import { running, onStartDriver } from '$lib/stores';
+  
 
   let team_name = $state("");
   let msg = $state("");
@@ -52,6 +53,13 @@
     };
   }
 
+  async function showAlert(contents: string, title: string = "Info", kind: "info" | "error" = "info") {
+  await message(contents, { 
+    title: title, 
+    kind: kind 
+  });
+}
+
   async function handle_start_driver_clicked(event: Event) {
     event.preventDefault();
     const currentRunning = await new Promise(resolve => running.subscribe(resolve)());
@@ -62,8 +70,10 @@
         msg = await invoke("start_racer");
         msg = "Started";
         running.set(true);
+        showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
       } catch (error) {
         msg = `Error: ${error}`;
+        showAlert(`Failed to start driver: ${error}`, "Error", "error");
       }
     } 
     else {
@@ -73,6 +83,7 @@
         running.set(false);
       } catch (error) {
         msg = `Error: ${error}`;
+        showAlert(`Failed to stop driver: ${error}`, "Error", "error");
       }
     }
   }
@@ -98,7 +109,7 @@
 </script>
 
 <main class="container">
-  <p>{msg}</p>
+  <!-- <p>{msg}</p> -->
   <div class="slider-grid">
     {#each sliders as slider, i}
       {#if slider.type=='slider'}
