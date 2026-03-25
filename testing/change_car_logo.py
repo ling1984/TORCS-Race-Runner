@@ -9,10 +9,13 @@ parser.add_argument('--car_index', type=int, help='The index of the car (0-9)')
 parser.add_argument('--image_path', type=str, help='The absolute path to the image to overlay (e.g., patch.png)')
 
 args = parser.parse_args()
-car_index = args.car_index
+car_index = args.car_index or 0
 image_path = args.image_path
 
 print("args read: ", args)
+
+if image_path is None:
+    print("As path is none, returning to default image.")
 
 # 1st we need the pathing to the car images
 # current_dir -> \torcs\drivers\scr_server\0..9\car1-ow1.rgb
@@ -20,27 +23,29 @@ copy_path = os.path.join(os.getcwd(), "torcs", "drivers", "scr_server", str(car_
 print("copy path: ", copy_path)
 
 base = Image.open(copy_path)      # .rgb image
-overlay = Image.open(image_path)  # Can be any format
-print(image_path, " opened successfully.")
-overlay = overlay.convert(base.mode) # convert to .rgb
 
-# we have 2 target sizes for 4 regions
-# 61x33 (1.85:1) and 37x20 (1.85:1)
+if image_path is None:
+    overlay = Image.open(image_path)  # Can be any format
+    print(image_path, " opened successfully.")
+    overlay = overlay.convert(base.mode) # convert to .rgb
 
-# scale the image to the two sizes
-overlay_132 = overlay.resize((61, 33), Image.NEAREST)
-overlay_90 = overlay.resize((37, 20), Image.NEAREST)
+    # we have 2 target sizes for 4 regions
+    # 61x33 (1.85:1) and 37x20 (1.85:1)
 
-# regions
-# (399,472), (54,402) and (93, 461), (387, 392)
-regions_132 = [(399,472), (54,402)]
-regions_90 = [(93, 461), (387, 392)]
+    # scale the image to the two sizes
+    overlay_61 = overlay.resize((61, 33), Image.NEAREST)
+    overlay_37 = overlay.resize((37, 20), Image.NEAREST)
 
-for region in regions_132:
-    base.paste(overlay_132, region, overlay_132) # the 3rd argument is the mask, which allows for transparency
+    # regions
+    # (399,472), (54,402) and (93, 461), (387, 392)
+    regions_61 = [(399,472), (54,402)]
+    regions_37 = [(93, 461), (387, 392)]
 
-for region in regions_90:
-    base.paste(overlay_90, region, overlay_90)
+    for region in regions_61:
+        base.paste(overlay_61, region, overlay_61) # the 3rd argument is the mask, which allows for transparency
+
+    for region in regions_37:
+        base.paste(overlay_37, region, overlay_37)
 
 result_path = os.path.join(os.getcwd(), "torcs", "drivers", "scr_server", str(car_index), "car1-ow1.rgb")
 base.save(result_path)

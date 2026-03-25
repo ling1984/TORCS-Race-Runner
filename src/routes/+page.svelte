@@ -1,15 +1,37 @@
 <script lang="ts">
-  import { invoke } from "@tauri-apps/api/core";
+  import { invoke, convertFileSrc } from "@tauri-apps/api/core";
+  import { open } from "@tauri-apps/plugin-dialog";
   import type { SliderConfig, DriverParams } from '$lib/types';
   import { running, onStartDriver } from '$lib/stores';
-  import { get } from 'svelte/store';
 
   let team_name = $state("");
   let msg = $state("");
+  let logo_path = $state("");
+  let preview_url = $state("");
 
   $effect(() => {
     onStartDriver.set(handle_start_driver_clicked);
   });
+
+  async function pick_logo_file() {
+    try {
+      const selected = await open({
+        multiple: false,
+        filters: [{
+          name: 'Image',
+          extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp']
+        }]
+      });
+
+      if (selected) {
+        logo_path = selected;
+        await invoke("set_logo_path", { path: logo_path });
+        preview_url = convertFileSrc(logo_path);
+      }
+    } catch (error) {
+      msg = `Error selecting logo: ${error}`;
+    }
+  }
 
   function collectParams(): DriverParams {
     return {
@@ -76,6 +98,7 @@
 </script>
 
 <main class="container">
+  <p>{msg}</p>
   <div class="slider-grid">
     {#each sliders as slider, i}
       {#if slider.type=='slider'}
@@ -180,10 +203,16 @@
     <header>
             <div class="label-container">
               <span class="label">Team logo</span>
-              <span class="help-icon" data-tooltip="Upload your team logo. TODO: Add more information about size and aspect ratio">?</span>
+              <span class="help-icon" data-tooltip="Upload your team logo. 1.85:1 aspect ratio and 61x33 pixels is recommended.">?</span>
             </div>
           </header>
-      <button onclick={() => team_name = ""}>Find your logo file</button>
+      {#if preview_url}
+        <div class="preview-container">
+          <img src={preview_url} alt="Team logo preview" class="logo-preview" />
+        </div>
+      {/if}
+      <button onclick={pick_logo_file}>Find your logo file</button>
+      <button onclick={() => {logo_path = ""; preview_url = "";}}>Reset</button>
     </div>
   </div>
 </main>
@@ -486,6 +515,24 @@ button {
 
 #target-input {
   margin-right: 5px;
+}
+
+.preview-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.logo-preview {
+  max-width: 100%;
+  max-height: 120px;
+  object-fit: contain;
+  border-radius: 2px;
 }
 
 @media (prefers-color-scheme: dark) {

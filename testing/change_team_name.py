@@ -8,9 +8,8 @@ parser.add_argument('--car_index', type=int, help='The index of the car (0-9)')
 parser.add_argument('--team_name', type=str, help='The name of the team.')
 
 args = parser.parse_args()
-car_index = args.car_index
-team_name = args.team_name
-
+car_index = args.car_index or 0
+team_name = args.team_name or "scr_driver 0"
 scr_server_xml_path = os.path.join(os.getcwd(), "torcs", "drivers", "scr_server", "scr_server.xml")
 
 lines=[]
