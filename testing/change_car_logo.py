@@ -25,16 +25,16 @@ print(image_path, " opened successfully.")
 overlay = overlay.convert(base.mode) # convert to .rgb
 
 # we have 2 target sizes for 4 regions
-# 132x44 (3:1) and 90x30 (3:1)
+# 61x33 (1.85:1) and 37x20 (1.85:1)
 
 # scale the image to the two sizes
-overlay_132 = overlay.resize((132, 44), Image.NEAREST)
-overlay_90 = overlay.resize((90, 30), Image.NEAREST)
+overlay_132 = overlay.resize((61, 33), Image.NEAREST)
+overlay_90 = overlay.resize((37, 20), Image.NEAREST)
 
 # regions
-# (159,447), (223,379) and (333, 172), (292, 260)
-regions_132 = [(159, 447), (223, 379)]
-regions_90 = [(333, 172), (292, 260)]
+# (399,472), (54,402) and (93, 461), (387, 392)
+regions_132 = [(399,472), (54,402)]
+regions_90 = [(93, 461), (387, 392)]
 
 for region in regions_132:
     base.paste(overlay_132, region, overlay_132) # the 3rd argument is the mask, which allows for transparency
