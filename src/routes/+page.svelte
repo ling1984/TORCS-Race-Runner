@@ -70,7 +70,7 @@
         msg = await invoke("start_racer");
         msg = "Started";
         running.set(true);
-        showAlert("Driver started successfully! Now in the TORCS window navigate Race-> Practice-> New Race, ", "Success", "info");
+        showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
       } catch (error) {
         msg = `Error: ${error}`;
         showAlert(`Failed to start driver: ${error}`, "Error", "error");
