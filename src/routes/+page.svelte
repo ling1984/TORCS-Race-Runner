@@ -1,10 +1,37 @@
 <script lang="ts">
-  import { invoke } from "@tauri-apps/api/core";
+  import { invoke, convertFileSrc } from "@tauri-apps/api/core";
+  import { open } from "@tauri-apps/plugin-dialog";
   import type { SliderConfig, DriverParams } from '$lib/types';
+  import { running, onStartDriver } from '$lib/stores';
 
   let team_name = $state("");
   let msg = $state("");
-  let running = $state(false);
+  let logo_path = $state("");
+  let preview_url = $state("");
+
+  $effect(() => {
+    onStartDriver.set(handle_start_driver_clicked);
+  });
+
+  async function pick_logo_file() {
+    try {
+      const selected = await open({
+        multiple: false,
+        filters: [{
+          name: 'Image',
+          extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp']
+        }]
+      });
+
+      if (selected) {
+        logo_path = selected;
+        await invoke("set_logo_path", { path: logo_path });
+        preview_url = convertFileSrc(logo_path);
+      }
+    } catch (error) {
+      msg = `Error selecting logo: ${error}`;
+    }
+  }
 
   function collectParams(): DriverParams {
     return {
@@ -21,18 +48,20 @@
         sliders[4].value5 as number,
       ],
       traction_control: sliders[5].value as boolean,
+      team_name: team_name,
     };
   }
 
-  async function handle_run_clicked(event: Event) {
+  async function handle_start_driver_clicked(event: Event) {
     event.preventDefault();
-    if (!running) {
+    const currentRunning = await new Promise(resolve => running.subscribe(resolve)());
+    if (!currentRunning) {
       try {
         const params = collectParams();
         await invoke("handle_params", { params });
         msg = await invoke("start_racer");
         msg = "Started";
-        running = true;
+        running.set(true);
       } catch (error) {
         msg = `Error: ${error}`;
       }
@@ -41,7 +70,7 @@
       try {
         msg = await invoke("stop_racer");
         msg = "Stopped";
-        running = false;
+        running.set(false);
       } catch (error) {
         msg = `Error: ${error}`;
       }
@@ -69,14 +98,7 @@
 </script>
 
 <main class="container">
-  <h1>TORCS Race Runner</h1>
-
-  <form class="row" onsubmit={handle_run_clicked}>
-    <input id="target-input" placeholder="Enter your team name..." bind:value={team_name} />
-    <button class="btn-drive" type="submit">{running ? 'Stop driver' : 'Start driver'}</button>
-  </form>
   <p>{msg}</p>
-
   <div class="slider-grid">
     {#each sliders as slider, i}
       {#if slider.type=='slider'}
@@ -112,9 +134,6 @@
               <span class="label">{slider.label}</span>
               <span class="help-icon" data-tooltip={slider.help}>?</span>
             </div>
-            <!-- <div class="multi-values">
-              {slider.value} | {slider.value2} | {slider.value3} | {slider.value4} | {slider.value5}
-            </div> -->
           </header>
           
           <div class="multi-slider-container">
@@ -126,7 +145,7 @@
               {v: 'value5', gear_change: '6th'}
             ] as thumb}
               <div class="input-wrapper">
-              <span class="multi-values">{thumb.gear_change}</span>
+              <span class="limit">{thumb.gear_change}</span>
               <!-- <span class="limit">{slider.min}</span> -->
               <input 
                 type="range" 
@@ -170,6 +189,31 @@
         </div>
       {/if}
     {/each}
+    <div class="slider-card">
+    <header>
+            <div class="label-container">
+              <span class="label">Team name</span>
+              <span class="help-icon" data-tooltip="Choose your team name.">?</span>
+            </div>
+          </header>
+          <input id="target-input" autocomplete="off" placeholder="Enter your team name..." bind:value={team_name} />
+          <button onclick={() => team_name = ""}>Reset</button>
+    </div>
+    <div class="slider-card">
+    <header>
+            <div class="label-container">
+              <span class="label">Team logo</span>
+              <span class="help-icon" data-tooltip="Upload your team logo. 1.85:1 aspect ratio and 61x33 pixels is recommended.">?</span>
+            </div>
+          </header>
+      {#if preview_url}
+        <div class="preview-container">
+          <img src={preview_url} alt="Team logo preview" class="logo-preview" />
+        </div>
+      {/if}
+      <button onclick={pick_logo_file}>Find your logo file</button>
+      <button onclick={() => {logo_path = ""; preview_url = "";}}>Reset</button>
+    </div>
   </div>
 </main>
 
@@ -189,7 +233,15 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  --line: #444;
+  --limit: #4a4a4a;
+  --button-background: #888;
+  --help-border:rgb(91, 91, 91);
+  --help-icon-background: #3c3c3c;
+  --help-icon-colour: white;
+  --slider-card-background: #f6f6f6;
 }
+
 .container {
   padding: 2rem;
   max-width: 1200px;
@@ -204,7 +256,7 @@ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .slider-card {
-  background: #2a2a2a;
+  background: var(--slider-card-background);
   padding: 1.5rem;
   border-radius: 8px;
   display: flex;
@@ -217,13 +269,14 @@ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 
 .value {
   min-width: 3ch;
+  font-weight: bold;
 }
 
 header {
   display: flex;
   justify-content: space-between;
   font-weight: bold;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid var(--line);
   padding-bottom: 0.5rem;
 }
 
@@ -235,13 +288,13 @@ header {
 .help-icon {
   margin-left: 0.5rem;
   cursor: default;
-  color: white;
+  color: var(--help-colour, white);
   font-size: 0.7rem;
   width: 1rem;
   height: 1rem;
   border-radius: 50%;
-  background: #444;
-  border: 1px solid #666;
+  background: var(--button-background);
+  border: 1px solid var(--help-border);
   display: flex;
   align-items: center;
   justify-content: center;  position: relative;
@@ -253,8 +306,8 @@ header {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: #333;
-  color: white;
+  background: var(--help-icon-background);
+  color: var(--help-icon-colour, white);
   padding: 0.75rem 1rem;
   border-radius: 6px;
   font-size: 1rem;
@@ -266,11 +319,6 @@ header {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   text-align: center;
   pointer-events: none;
-}
-
-.multi-values {
-  font-size: 0.9rem;
-  color: #aaa;
 }
 
 .multi-slider-container {
@@ -351,7 +399,7 @@ header {
   position: relative;
   display: inline-block;
   padding: 0.5rem 1rem;
-  background: #444;
+  background: var(--button-background);
   color: white;
   border: 2px solid transparent;
   border-radius: 4px;
@@ -403,8 +451,8 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 .limit {
-  font-size: 0.8rem;
-  color: #888;
+  font-size: 0.9rem;
+  color: var(--limit);
   min-width: 20px;
 }
 
@@ -424,16 +472,10 @@ button:hover {
 
 .container {
   margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.row {
-  display: flex;
-  justify-content: center;
+  padding: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 h1 {
@@ -475,16 +517,40 @@ button {
   margin-right: 5px;
 }
 
+.preview-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.logo-preview {
+  max-width: 100%;
+  max-height: 120px;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
     background-color: #2f2f2f;
+    --limit: #dedede;
+    --button-background: #444;
+    --slider-card-background: #2b2a2a98;
   }
 
   input,
   button {
-    color: #ffffff;
+    color: #fff;
     background-color: #0f0f0f98;
+    --help-border:rgb(37, 37, 37);
+    --help-icon-background: #a71212;
+    --help-icon-colour: white;
   }
   button:active {
     background-color: #0f0f0f69;

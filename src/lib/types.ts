@@ -25,4 +25,5 @@ export interface DriverParams {
   brake_threshold: number;
   gear_thresholds: number[];
   traction_control: boolean;
+  team_name: string;
 }
