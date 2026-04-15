@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 
 parser = argparse.ArgumentParser(
     prog='ScrTeamNameEditor',
@@ -10,7 +11,7 @@ parser.add_argument('--team_name', type=str, help='The name of the team.')
 args = parser.parse_args()
 car_index = args.car_index or 0
 team_name = args.team_name or "scr_driver 0"
-scr_server_xml_path = os.path.join(os.getcwd(), "torcs", "drivers", "scr_server", "scr_server.xml")
+scr_server_xml_path = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "torcs", "drivers", "scr_server", "scr_server.xml")
 
 lines=[]
 # name attribute starts at line 18 (index 17) and continues every 11 lines for each car
