@@ -10,7 +10,7 @@
 <header class="header">
   <h1>TORCS Race Runner</h1>
   <form class="button-container" onsubmit={handleButtonClick}>
-    <button class="btn-drive" type="submit">
+    <button class="btn-drive {$running ? 'running' : 'stopped'}" type="submit">
       {$running ? 'Stop driver' : 'Start driver'}
     </button>
   </form>
@@ -60,13 +60,30 @@
     transition: background 0.2s;
   }
 
-  .btn-drive:hover {
-    background: #0056b3;
-  }
+  
+/* STOP (running=true) */
+.btn-drive.running {
+  background: #e74c3c;
+}
+.btn-drive.running:hover {
+  background: #c0392b;
+}
+.btn-drive.running:active {
+  background: #a93226;
+  transform: scale(0.97);
+}
 
-  .btn-drive:active {
-    background: #003d82;
-  }
+/* START (running=false) */
+.btn-drive.stopped {
+  background: #2ecc71;
+}
+.btn-drive.stopped:hover {
+  background: #27ae60;
+}
+.btn-drive.stopped:active {
+  background: #1e8449;
+  transform: scale(0.97);
+}
 
   @media (prefers-color-scheme: dark) {
     .header {
