@@ -54,12 +54,14 @@ fn start_racer(state: State<DriverState>) -> Result<(), String> {
 
     // Get the stored logo path and change car logo if it exists
     let logo_path_guard = state.logo_path.lock().unwrap();
-    if let Some(ref logo_path) = *logo_path_guard {
+
+    // If there is some logo path (we set None if ""), we change the logo
+    if let Some(ref logo_path) = *logo_path_guard{
         match car_logo::overlay_car_logo(0, logo_path, &exe_dir) {
             Ok(()) => println!("Car logo overlayed successfully."),
             Err(e) => eprintln!("Car logo overlay error: {e}"),
         }
-    } else {
+    } else { // else reset
         match car_logo::reset_car_logo(0, &exe_dir) {
             Ok(()) => println!("Car logo reset successfully."),
             Err(e) => eprintln!("Car logo reset error: {e}"),
@@ -91,7 +93,15 @@ fn start_racer(state: State<DriverState>) -> Result<(), String> {
 #[tauri::command]
 fn set_logo_path(path: String, state: State<DriverState>) -> Result<(), String> {
     let mut guard = state.logo_path.lock().unwrap();
-    *guard = Some(path);
+    println!("path is {}", path);
+    
+    // we set it to none if it is empty
+    // so that we can reset if empty
+    *guard = if path.is_empty() {
+        None
+    } else {
+        Some(path)
+    };
     Ok(())
 }
 
