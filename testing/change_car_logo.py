@@ -1,6 +1,7 @@
 from PIL import Image
 import argparse
 import os
+import sys
 
 parser = argparse.ArgumentParser(
     prog='CarLogoEditor',
@@ -19,7 +20,7 @@ if image_path is None:
 
 # 1st we need the pathing to the car images
 # current_dir -> \torcs\drivers\scr_server\0..9\car1-ow1.rgb
-copy_path = os.path.join(os.getcwd(), "torcs", "drivers", "scr_server", str(car_index), "car1-ow1 - Copy.rgb")
+copy_path = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "torcs", "drivers", "scr_server", str(car_index), "car1-ow1 - Copy.rgb")
 print("copy path: ", copy_path)
 
 base = Image.open(copy_path)      # .rgb image
@@ -47,5 +48,5 @@ if image_path is None:
     for region in regions_37:
         base.paste(overlay_37, region, overlay_37)
 
-result_path = os.path.join(os.getcwd(), "torcs", "drivers", "scr_server", str(car_index), "car1-ow1.rgb")
+result_path = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "torcs", "drivers", "scr_server", str(car_index), "car1-ow1.rgb")
 base.save(result_path)
