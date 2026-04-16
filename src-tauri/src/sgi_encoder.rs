@@ -48,7 +48,7 @@ image-extras supports SGI .sgi but does not extend ImageReader, and with image::
 The fix was to treat the image as a file instead of an image.
 
 
-ANOTHER BIG ISSUE: SGI counts from bottom left of image. we, i assume count, from topleft usually. so the resulting image was upside down.
+ANOTHER BIG ISSUE: SGI counts from bottom left of image. we, i assume count, from topleft usually. so the resulting image was upside down. .rev()
 */
 
 use std::fs::File;
@@ -85,7 +85,7 @@ pub fn write_sgi(img : image::ImageBuffer<image::Rgba<u8>, Vec<u8>>, path : &Pat
 
     // z = 0..4 → R, G, B, A
     for z in 0..4 {
-        for y in height..0 { // FLIP ORDER BECAUSE SGI starts counting at bottom left of image
+        for y in (0..height).rev() { // FLIP ORDER BECAUSE SGI starts counting at bottom left of image
             for x in 0..width {
                 let idx = (y * width + x) * 4 + z; // * 4 because we want to skip the other colours on each pass
                 row[x] = rgba_data[idx];
