@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 mod team_name;
 mod car_logo;
+mod sgi_encoder;
 
 #[derive(Serialize, Deserialize, Clone)]
 struct DriverParams {

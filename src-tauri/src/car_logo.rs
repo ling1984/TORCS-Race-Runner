@@ -1,11 +1,13 @@
-use image::{ImageReader};
 use image::imageops::FilterType;
 use std::path::PathBuf;
 
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader};
+use std::result;
 use image::DynamicImage;
 use image_extras::sgi::SgiDecoder;
+
+use crate::sgi_encoder;
 
 /*
 I had lots of trouble getting SGI .rgb to work.
@@ -31,13 +33,13 @@ pub fn overlay_car_logo(car_index: u32, image_path: &str, exe_dir: &PathBuf) -> 
         .map_err(|e| format!("Failed to convert to DynamicImage: {}", e))?;
 
     // Load overlay
-    let overlay = ImageReader::open(image_path)
+    let overlay = image::ImageReader::open(image_path)
         .map_err(|e| format!("Failed to open overlay: {}", e))?
         .decode()
         .map_err(|e| format!("Failed to decode overlay: {}", e))?;
 
     // Convert to RGBA8 for easier overlaying
-    let base_rgba = base.to_rgba8();
+    let base_rgba: image::ImageBuffer<image::Rgba<u8>, Vec<u8>> = base.to_rgba8();
     let overlay_rgba: image::ImageBuffer<image::Rgba<u8>, Vec<u8>> = overlay.to_rgba8();
 
     // Scale
@@ -57,8 +59,15 @@ pub fn overlay_car_logo(car_index: u32, image_path: &str, exe_dir: &PathBuf) -> 
         image::imageops::overlay(&mut base_img, &overlay_37, x as i64, y as i64);
     }
 
-    base_img.save(result_path)
-        .map_err(|e| format!("Failed to save image: {}", e))?;
+    // we need to convert rgba8 to sgi format
+    match sgi_encoder::write_sgi(base_img, &result_path) {
+        Ok(()) => println!("SGI write succeeded"),
+        Err(e) => eprintln!("SGI write failed: {}", e),
+    }
+
+    
+    // base_img.save(result_path)
+    //     .map_err(|e| format!("Failed to save image: {}", e))?;
 
     Ok(())
 }
