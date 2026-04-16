@@ -55,8 +55,15 @@ fn start_racer(state: State<DriverState>) -> Result<(), String> {
     // Get the stored logo path and change car logo if it exists
     let logo_path_guard = state.logo_path.lock().unwrap();
     if let Some(ref logo_path) = *logo_path_guard {
-        car_logo::overlay_car_logo(0, logo_path, &exe_dir)
-            .map_err(|e| e.to_string())?;
+        match car_logo::overlay_car_logo(0, logo_path, &exe_dir) {
+            Ok(()) => println!("Car logo overlayed successfully."),
+            Err(e) => eprintln!("Car logo overlay error: {e}"),
+        }
+    } else {
+        match car_logo::reset_car_logo(0, &exe_dir) {
+            Ok(()) => println!("Car logo reset successfully."),
+            Err(e) => eprintln!("Car logo reset error: {e}"),
+        }
     }
 
     // -- Start the driver script with parameters --

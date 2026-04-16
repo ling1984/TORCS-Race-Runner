@@ -41,13 +41,23 @@ https://paulbourke.net/dataformats/sgirgb/
 
 */
 
+/*
+I had lots of trouble getting SGI .rgb to work.
+image-extras supports SGI .sgi but does not extend ImageReader, and with image::open you cannot specify the type.
+
+The fix was to treat the image as a file instead of an image.
+
+
+ANOTHER BIG ISSUE: SGI counts from bottom left of image. we, i assume count, from topleft usually. so the resulting image was upside down.
+*/
+
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 
 pub fn write_sgi(img : image::ImageBuffer<image::Rgba<u8>, Vec<u8>>, path : &PathBuf) -> Result<(), String>{
     let rle_compression = false;
-    let header=get_header(img.width(), img.height(), rle_compression);
+    let header=get_header(img.width() as u16, img.height() as u16, rle_compression);
 
     // get the file writer
     let result_file = File::create(path)
@@ -75,7 +85,7 @@ pub fn write_sgi(img : image::ImageBuffer<image::Rgba<u8>, Vec<u8>>, path : &Pat
 
     // z = 0..4 → R, G, B, A
     for z in 0..4 {
-        for y in 0..height {
+        for y in height..0 { // FLIP ORDER BECAUSE SGI starts counting at bottom left of image
             for x in 0..width {
                 let idx = (y * width + x) * 4 + z; // * 4 because we want to skip the other colours on each pass
                 row[x] = rgba_data[idx];
@@ -93,7 +103,7 @@ pub fn write_sgi(img : image::ImageBuffer<image::Rgba<u8>, Vec<u8>>, path : &Pat
 /*
 We return
 */
-fn get_header(width : u32, height: u32, rle_compression : bool) -> [u8;512]{
+fn get_header(width : u16, height: u16, rle_compression : bool) -> [u8;512]{
     let mut header = [0u8; 512];
 
     header[0..2].copy_from_slice(&474u16.to_be_bytes());    // Magic number (474)

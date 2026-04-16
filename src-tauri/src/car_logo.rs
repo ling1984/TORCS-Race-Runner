@@ -1,20 +1,12 @@
 use image::imageops::FilterType;
 use std::path::PathBuf;
 
-use std::fs::File;
+use std::fs::{File, copy};
 use std::io::{BufReader};
-use std::result;
 use image::DynamicImage;
 use image_extras::sgi::SgiDecoder;
 
 use crate::sgi_encoder;
-
-/*
-I had lots of trouble getting SGI .rgb to work.
-image-extras supports SGI .sgi but does not extend ImageReader, and with image::open you cannot specify the type.
-
-The fix was to treat the image as a file instead of an image.
-*/
 
 pub fn overlay_car_logo(car_index: u32, image_path: &str, exe_dir: &PathBuf) -> Result<(), String> {
     let base_dir = exe_dir.join("torcs").join("drivers").join("scr_server").join(car_index.to_string());
@@ -65,9 +57,18 @@ pub fn overlay_car_logo(car_index: u32, image_path: &str, exe_dir: &PathBuf) -> 
         Err(e) => eprintln!("SGI write failed: {}", e),
     }
 
-    
-    // base_img.save(result_path)
-    //     .map_err(|e| format!("Failed to save image: {}", e))?;
+    Ok(())
+}
+
+
+
+pub fn reset_car_logo(car_index: u32,exe_dir: &PathBuf) -> Result<(), String> {
+    let base_dir = exe_dir.join("torcs").join("drivers").join("scr_server").join(car_index.to_string());
+    let copy_path = base_dir.join("car1-ow1 - Copy.rgb");
+    let result_path = base_dir.join("car1-ow1.rgb");
+
+    copy(&copy_path, &result_path)
+        .map_err(|e| format!("Failed to copy file: {}", e))?;
 
     Ok(())
 }
