@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
 
   function openApp() {
-    goto('/single'); // navigate to your old content
+    goto('/single');
   }
 </script>
 
