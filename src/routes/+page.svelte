@@ -4,12 +4,12 @@
 
   function startPractice() {
     console.log("Start Practice clicked");
-    goto('/single');
+    goto('/practice');
   }
 
   function startRace() {
     console.log("Start Race clicked");
-    goto('/multi');
+    goto('/race');
   }
 
   function editTrackBanner() {
