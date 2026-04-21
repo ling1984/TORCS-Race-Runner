@@ -13,7 +13,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  --line: #444;
+  --line: background-color;
   --limit: #4a4a4a;
   --button-background: #888;
   --help-border:rgb(91, 91, 91);
@@ -259,7 +259,10 @@ button:hover {
 }
 
 h1 {
-  text-align: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
 }
 
 input,

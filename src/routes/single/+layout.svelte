@@ -1,19 +1,26 @@
 <script lang="ts">
   import { running, onStartDriver } from '$lib/stores';
+  import { goto } from '$app/navigation';
 
   async function handleButtonClick(event: Event) {
     const handler = $onStartDriver;
     await handler(event);
   }
+
+  function handleBackClick() {
+    console.log("Back clicked");
+    goto('/');
+  }
 </script>
 
 <header class="header">
-  <h1>TORCS Race Runner</h1>
-  <form class="button-container" onsubmit={handleButtonClick}>
-    <button class="btn-drive {$running ? 'running' : 'stopped'}" type="submit">
-      {$running ? 'Stop driver' : 'Start driver'}
+    <button class="btn" type="button" onclick={handleBackClick}>
+      Back
     </button>
-  </form>
+  <h1>Practice</h1>
+    <button class="btn-drive {$running ? 'running' : 'stopped'}" type="button" onclick={handleButtonClick}>
+      {$running ? 'Stop' : 'Start'}
+    </button>
 </header>
 
 <slot></slot>
