@@ -1,5 +1,6 @@
 <script>
   import { goto } from '$app/navigation';
+  import { Timer, Flag, Palette } from '@lucide/svelte';
 
   function startPractice() {
     console.log("Start Practice clicked");
@@ -60,25 +61,18 @@
 }
 
 .home-icon {
-  width: 48px;
-  height: 48px;
+  width: 96px;
+  height: 72px;
 }
 
 .home-label {
   font-size: 22px;
   color: #000;
 }
-
-/* clean icon style */
-svg {
-  stroke: #222;
-  fill: none;
-  stroke-width: 2;
-}
 </style>
 
 <header class="header">
-  <h1>Racer Runner</h1>
+  <h1>TORCS Race Runner</h1>
 </header>
 
 <div class="home-container">
@@ -86,27 +80,19 @@ svg {
     
     <!-- Start Practice -->
     <button class="home-slider-card" type="button" onclick={startPractice}>
-      <svg class="home-icon" viewBox="0 0 24 24">
-        <polygon points="6,4 20,12 6,20" fill="none"></polygon>
-      </svg>
+      <Timer size={72} strokeWidth={1.5}/>
       <div class="home-label">Practice</div>
     </button>
     
     <!-- Start Race -->
     <button class="home-slider-card" type="button" onclick={startRace}>
-      <svg class="home-icon" viewBox="0 0 24 24">
-        <polygon points="6,4 20,12 6,20" fill="none"></polygon>
-      </svg>
+      <Flag size={72} strokeWidth={1.5} />
       <div class="home-label">Race</div>
     </button>
 
     <!-- Edit Track Banner -->
     <button class="home-slider-card" type="button" onclick={editTrackBanner}>
-      <svg class="home-icon" viewBox="0 0 24 24">
-        <rect x="3" y="14" width="14" height="7"></rect>
-        <line x1="14" y1="3" x2="21" y2="10"></line>
-        <line x1="13" y1="4" x2="20" y2="11"></line>
-      </svg>
+      <Palette size={72} strokeWidth={1.5} />
       <div class="home-label">Edit Track Banner</div>
     </button>
 
