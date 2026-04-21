@@ -1,0 +1,414 @@
+
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color: #0f0f0f;
+  background-color: #f6f6f6;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  --line: background-color;
+  --limit: #4a4a4a;
+  --button-background: #888;
+  --help-border:rgb(91, 91, 91);
+  --help-icon-background: #3c3c3c;
+  --help-icon-colour: white;
+  --slider-card-background: #f6f6f6;
+}
+
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Responsive Grid: 3 columns on desktop, 2 on tablet, 1 on mobile */
+.slider-grid {
+display: grid;
+gap: 1.5rem;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.slider-card {
+  background: var(--slider-card-background);
+  padding: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  min-height: fit-content;
+  align-items: stretch;
+}
+
+.value {
+  min-width: 3ch;
+  font-weight: bold;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.5rem;
+}
+
+.label-container {
+  display: flex;
+  align-items: center;
+}
+
+.help-icon {
+  margin-left: 0.5rem;
+  cursor: default;
+  color: var(--help-colour, white);
+  font-size: 0.7rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--button-background);
+  border: 1px solid var(--help-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;  position: relative;
+}
+
+.help-icon:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--help-icon-background);
+  color: var(--help-icon-colour, white);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  white-space: normal;
+  z-index: 10;
+  margin-bottom: 0.5rem;
+  max-width: 200px;
+  width: max-content;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  pointer-events: none;
+}
+
+.multi-slider-container {
+  position: relative;
+  gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.slider-track {
+  position: absolute;
+  width: 100%;
+  height: 6px;
+  background: #444;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.thumb {
+  position: absolute;
+  width: 100%;
+  height: 30px;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  z-index: 5;
+}
+
+.thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px #2a2a2a;
+}
+
+.thumb::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  border: 2px solid #2a2a2a;
+}
+
+.thumb::-webkit-slider-runnable-track {
+  background: transparent;
+  border: none;
+}
+
+.thumb-1 { z-index: 5; }
+.thumb-2 { z-index: 6; }
+.thumb-3 { z-index: 7; }
+.thumb-4 { z-index: 8; }
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.radio-buttons {
+  justify-content: space-around;
+  gap: 0;
+}
+
+.radio-button {
+  position: relative;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--button-background);
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  text-align: center;
+}
+
+.radio-button input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.radio-button:has(input:checked) {
+  border-color: #007bff;
+  background: #007bff;
+}
+
+input[type="range"] {
+  flex-grow: 1;
+  cursor: pointer;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+/* 2. Style the Track (The long bar) */
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  border: none;
+}
+
+/* 3. Style the Thumb (The blue circle)*/
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  margin-top: -6px;
+  box-shadow: none; 
+} 
+
+
+.limit {
+  font-size: 0.9rem;
+  color: var(--limit);
+  min-width: 20px;
+}
+
+button {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 0.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #666;
+}
+
+.container {
+  margin: 0;
+  padding: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+}
+
+input,
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: #0f0f0f;
+  background-color: #ffffff;
+  transition: border-color 0.25s;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #396cd8;
+}
+button:active {
+  border-color: #396cd8;
+  background-color: #e8e8e8;
+}
+
+input,
+button {
+  outline: none;
+}
+
+#target-input {
+  margin-right: 5px;
+}
+
+.preview-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.logo-preview {
+  max-width: 100%;
+  max-height: 120px;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f6f6f6;
+    background-color: #2f2f2f;
+    --limit: #dedede;
+    --button-background: #444;
+    --slider-card-background: #2b2a2a98;
+  }
+
+  input,
+  button {
+    color: #fff;
+    background-color: #0f0f0f98;
+    --help-border:rgb(37, 37, 37);
+    --help-icon-background: #a71212;
+    --help-icon-colour: white;
+  }
+  button:active {
+    background-color: #0f0f0f69;
+  }
+}
+
+/* layout here->> */
+.header {
+    /* position: sticky; when it can behave itself, it can come back to being sticky.
+    issues:
+    1. it is see through on light mode
+    2. help icons and tooltips appear above it
+    3. header height at top is slightly larger than height when scrolling */
+    top: 0;
+    overflow: visible;
+    width: 100%;
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1.5rem 2rem;
+    background: var(--background);
+    border-bottom: 1px solid var(--line);
+}
+
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
+
+  .button-container {
+    display: flex;
+  }
+
+  .btn-drive {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  
+/* STOP (running=true) */
+.btn-drive.running {
+  background: #e74c3c;
+}
+.btn-drive.running:hover {
+  background: #c0392b;
+}
+.btn-drive.running:active {
+  background: #a93226;
+  transform: scale(0.97);
+}
+
+/* START (running=false) */
+.btn-drive.stopped {
+  background: #2ecc71;
+}
+.btn-drive.stopped:hover {
+  background: #27ae60;
+}
+.btn-drive.stopped:active {
+  background: #1e8449;
+  transform: scale(0.97);
+}
+
+@media (prefers-color-scheme: dark) {
+.header {
+    background: var(--background, #2f2f2f);
+}
+}
