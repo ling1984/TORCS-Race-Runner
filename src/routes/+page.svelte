@@ -20,7 +20,7 @@
 
 <style>
 .home-container {
-  height: 100vh;
+  height: 80vh;
   display: flex;
   justify-content: center;  /* center horizontally */
   align-items: center;      /* center vertically */
@@ -29,9 +29,10 @@
 /* Force exactly 3 columns with fixed size */
 .home-slider-grid {
   display: grid;
-  grid-template-columns: repeat(3, 220px);
-  gap: 60px;
+  grid-template-columns: repeat(3, 198px);
+  gap: 48px;
   justify-content: center;
+  padding-left: 2rem;
 }
 
 /* Make buttons look like the cards from your image */
@@ -75,6 +76,11 @@ svg {
   stroke-width: 2;
 }
 </style>
+
+<header class="header">
+  <h1>Racer Runner</h1>
+</header>
+
 <div class="home-container">
   <div class="home-slider-grid">
     
@@ -83,7 +89,7 @@ svg {
       <svg class="home-icon" viewBox="0 0 24 24">
         <polygon points="6,4 20,12 6,20" fill="none"></polygon>
       </svg>
-      <div class="home-label">Start Practice</div>
+      <div class="home-label">Practice</div>
     </button>
     
     <!-- Start Race -->
@@ -91,7 +97,7 @@ svg {
       <svg class="home-icon" viewBox="0 0 24 24">
         <polygon points="6,4 20,12 6,20" fill="none"></polygon>
       </svg>
-      <div class="home-label">Start Race</div>
+      <div class="home-label">Race</div>
     </button>
 
     <!-- Edit Track Banner -->
