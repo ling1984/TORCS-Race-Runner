@@ -58,6 +58,50 @@ header {
   font-weight: bold;
   border-bottom: 1px solid var(--line);
   padding-bottom: 0.5rem;
+  height: 72px; 
+}
+
+.home-container {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;     
+}
+
+.home-slider-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 198px);
+  gap: 48px;
+  justify-content: center;
+  padding-left: 2rem;
+}
+
+.home-slider-card {
+  width: 198px;
+  height: 162px;
+  border-radius: 20px;
+  background: var(--slider-card-background, #f2f2f2);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 12px;
+  border: none;
+  cursor: pointer;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.1s ease;
+}
+
+.home-slider-card:hover {
+  transform: scale(1.03);
+}
+
+.home-label {
+  font-size: 22px;
+  color: #000;
 }
 
 .label-container {
@@ -258,13 +302,6 @@ button:hover {
   margin-right: auto;
 }
 
-h1 {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-}
-
 input,
 button {
   border-radius: 8px;
@@ -356,6 +393,8 @@ button {
     justify-content: space-between;
     align-items: center;
 
+    position:relative;
+
     padding: 1.5rem 2rem;
     background: var(--background);
     border-bottom: 1px solid var(--line);
@@ -364,6 +403,12 @@ button {
   h1 {
     margin: 0;
     font-size: 2rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    
   }
 
   .button-container {
