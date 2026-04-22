@@ -72,7 +72,6 @@ header {
   grid-template-columns: repeat(3, 198px);
   gap: 48px;
   justify-content: center;
-  padding-left: 2rem;
 }
 
 .home-slider-card {
