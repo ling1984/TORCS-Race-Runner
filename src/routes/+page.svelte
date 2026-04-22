@@ -12,8 +12,8 @@
     goto('/race');
   }
 
-  function editTrackBanner() {
-    console.log("Edit Track Banner clicked");
+  function editBanner() {
+    console.log("Edit Banner clicked");
     goto('/banner');
   }
 
@@ -38,10 +38,10 @@
       <div class="home-label">Race</div>
     </button>
 
-    <!-- Edit Track Banner -->
-    <button class="home-slider-card" type="button" onclick={editTrackBanner}>
+    <!-- Edit Banner -->
+    <button class="home-slider-card" type="button" onclick={editBanner}>
       <Palette size={72} strokeWidth={1.5} />
-      <div class="home-label">Edit Track Banner</div>
+      <div class="home-label">Edit Banner</div>
     </button>
 
   </div>

@@ -19,3 +19,8 @@ To update the images run:
 ```
 npx playwright test --update-snapshots
 ```
+
+Show reports without re-running:
+```
+pnpm exec playwright show-report
+```
