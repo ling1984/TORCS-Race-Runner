@@ -1,7 +1,21 @@
-# Tauri + SvelteKit + TypeScript
+# TORCS Race Runner
 
-This template should help get you started developing with Tauri, SvelteKit and TypeScript in Vite.
+This app was created to be used in IBM AI Race League hackathons. It was created on behalf of UCL (University College London).
 
-## Recommended IDE Setup
+It uses Rust Tauri + Svelte Typescript.
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
+
+## Testing
+
+We use automated regression testing with Playwright.
+It takes screenshots of each page and then compares them to previous screenshots.
+
+To run the tests use:
+```
+pnpm exec playwright show-report
+```
+
+To update the images run:
+```
+npx playwright test --update-snapshots
+```
