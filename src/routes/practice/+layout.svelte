@@ -14,7 +14,7 @@
   }
 </script>
 
-<header class="header">
+<header class="header" style="height: 72px;">
     <button class="btn" type="button" onclick={handleBackClick}>
       <ArrowLeft size={24}/>
     </button>

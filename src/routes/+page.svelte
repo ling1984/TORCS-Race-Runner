@@ -19,7 +19,7 @@
 
 </script>
 
-<header class="header">
+<header class="header" style="height: 72px;">
   <h1>TORCS Race Runner</h1>
 </header>
 

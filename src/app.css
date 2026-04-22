@@ -58,7 +58,6 @@ header {
   font-weight: bold;
   border-bottom: 1px solid var(--line);
   padding-bottom: 0.5rem;
-  height: 72px; 
 }
 
 .home-container {
@@ -105,8 +104,10 @@ header {
 }
 
 .label-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
+  gap: 0.8rem;
 }
 
 .help-icon {
@@ -209,7 +210,8 @@ header {
 .thumb-4 { z-index: 8; }
 
 .input-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 0.8rem;
 }
@@ -277,7 +279,7 @@ input[type="range"]::-webkit-slider-thumb {
 .limit {
   font-size: 0.9rem;
   color: var(--limit);
-  min-width: 20px;
+  min-width: 25px;
 }
 
 button {
