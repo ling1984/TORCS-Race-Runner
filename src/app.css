@@ -20,6 +20,7 @@
   --help-icon-background: #3c3c3c;
   --help-icon-colour: white;
   --slider-card-background: #f6f6f6;
+  --home-box-shadow: rgba(0, 0, 0, 0.15);
 }
 
 .container {
@@ -89,7 +90,7 @@ header {
   border: none;
   cursor: pointer;
 
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px var(--home-box-shadow);
   transition: transform 0.1s ease;
 }
 
@@ -99,7 +100,7 @@ header {
 
 .home-label {
   font-size: 22px;
-  color: #000;
+  color: color;
 }
 
 .label-container {
@@ -362,9 +363,11 @@ button {
   :root {
     color: #f6f6f6;
     background-color: #2f2f2f;
+    background: #2f2f2f;
     --limit: #dedede;
     --button-background: #444;
     --slider-card-background: #2b2a2a98;
+    --home-box-shadow: rgba(0, 0, 0, 0.5);
   }
 
   input,
@@ -453,10 +456,4 @@ button {
 .btn-drive.stopped:active {
   background: #1e8449;
   transform: scale(0.97);
-}
-
-@media (prefers-color-scheme: dark) {
-.header {
-    background: var(--background, #2f2f2f);
-}
 }

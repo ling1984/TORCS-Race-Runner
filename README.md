@@ -12,7 +12,7 @@ It takes screenshots of each page and then compares them to previous screenshots
 
 To run the tests use:
 ```
-pnpm exec playwright show-report
+pnpm exec playwright test
 ```
 
 To update the images run:
