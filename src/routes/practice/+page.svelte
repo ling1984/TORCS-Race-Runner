@@ -54,11 +54,11 @@
   }
 
   async function showAlert(contents: string, title: string = "Info", kind: "info" | "error" = "info") {
-  await message(contents, { 
-    title: title, 
-    kind: kind 
-  });
-}
+    await message(contents, { 
+      title: title, 
+      kind: kind 
+    });
+  }
 
   async function handle_start_driver_clicked(event: Event) {
     event.preventDefault();

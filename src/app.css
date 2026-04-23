@@ -20,6 +20,7 @@
   --help-icon-background: #3c3c3c;
   --help-icon-colour: white;
   --slider-card-background: #f6f6f6;
+  --home-box-shadow: rgba(0, 0, 0, 0.15);
 }
 
 .container {
@@ -60,9 +61,53 @@ header {
   padding-bottom: 0.5rem;
 }
 
-.label-container {
+.home-container {
+  height: 80vh;
   display: flex;
+  justify-content: center;
+  align-items: center;     
+}
+
+.home-slider-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 198px);
+  gap: 48px;
+  justify-content: center;
+}
+
+.home-slider-card {
+  width: 198px;
+  height: 162px;
+  border-radius: 20px;
+  background: var(--slider-card-background, #f2f2f2);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+
+  gap: 12px;
+  border: none;
+  cursor: pointer;
+
+  box-shadow: 0 2px 6px var(--home-box-shadow);
+  transition: transform 0.1s ease;
+}
+
+.home-slider-card:hover {
+  transform: scale(1.03);
+}
+
+.home-label {
+  font-size: 22px;
+  color: color;
+}
+
+.label-container {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .help-icon {
@@ -165,14 +210,17 @@ header {
 .thumb-4 { z-index: 8; }
 
 .input-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 0.8rem;
 }
 
 .radio-buttons {
+  display: flex;
+  align-items: center;
   justify-content: space-around;
-  gap: 0;
+  gap: 0.8rem;
 }
 
 .radio-button {
@@ -233,7 +281,7 @@ input[type="range"]::-webkit-slider-thumb {
 .limit {
   font-size: 0.9rem;
   color: var(--limit);
-  min-width: 20px;
+  min-width: 25px;
 }
 
 button {
@@ -256,13 +304,6 @@ button:hover {
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-}
-
-h1 {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
 }
 
 input,
@@ -322,9 +363,11 @@ button {
   :root {
     color: #f6f6f6;
     background-color: #2f2f2f;
+    background: #2f2f2f;
     --limit: #dedede;
     --button-background: #444;
     --slider-card-background: #2b2a2a98;
+    --home-box-shadow: rgba(0, 0, 0, 0.5);
   }
 
   input,
@@ -356,6 +399,8 @@ button {
     justify-content: space-between;
     align-items: center;
 
+    position:relative;
+
     padding: 1.5rem 2rem;
     background: var(--background);
     border-bottom: 1px solid var(--line);
@@ -364,6 +409,12 @@ button {
   h1 {
     margin: 0;
     font-size: 2rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    
   }
 
   .button-container {
@@ -405,10 +456,4 @@ button {
 .btn-drive.stopped:active {
   background: #1e8449;
   transform: scale(0.97);
-}
-
-@media (prefers-color-scheme: dark) {
-.header {
-    background: var(--background, #2f2f2f);
-}
 }
