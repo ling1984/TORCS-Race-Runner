@@ -2,11 +2,11 @@
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
   import { open } from "@tauri-apps/plugin-dialog";
 
-  let logo_path = $state("");
+  let banner_path = $state("");
   let preview_url = $state("");
   let msg = $state("");
   
-  async function pick_logo_file() {
+  async function pick_banner_file() {
     try {
       const selected = await open({
         multiple: false,
@@ -17,25 +17,25 @@
       });
 
       if (selected) {
-        logo_path = selected;
-        await invoke("set_logo_path", { path: logo_path });
-        preview_url = convertFileSrc(logo_path);
+        banner_path = selected;
+        await invoke("set_banner_path", { path: banner_path });
+        preview_url = convertFileSrc(banner_path);
       }
     } catch (error) {
-      msg = `Error selecting logo: ${error}`;
+      msg = `Error selecting banner: ${error}`;
     }
   }
 </script>
 
-<div class="slider-grid">
-  <div class="slider-card">
+<div class="container">
+  <div class="banner-card">
 
       {#if preview_url}
         <div class="preview-container">
-          <img src={preview_url} alt="Team logo preview" class="logo-preview" />
+          <img src={preview_url} alt="Team banner preview" class="logo-preview" />
         </div>
       {/if}
-      <button onclick={pick_logo_file}>Find your logo file</button>
-      <button onclick={() => {logo_path = ""; preview_url = ""; invoke("set_logo_path", { path: logo_path });}}>Reset</button>
+      <button style="width: 400px;" onclick={pick_banner_file}>Find your banner file</button>
+      <button style="width: 400px;" onclick={() => {banner_path = ""; preview_url = ""; invoke("set_banner_path", { path: banner_path });}}>Reset</button>
     </div>
 </div>
