@@ -222,7 +222,7 @@
           <img src={preview_url} alt="Team logo preview" class="logo-preview" />
         </div>
       {/if}
-      <button onclick={pick_logo_file}>Find your logo file</button>
+      <button onclick={pick_logo_file}>Find file</button>
       <button onclick={() => {logo_path = ""; preview_url = ""; invoke("set_logo_path", { path: logo_path });}}>Reset</button>
     </div>
   </div>

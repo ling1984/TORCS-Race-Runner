@@ -2,11 +2,13 @@
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
   import { open } from "@tauri-apps/plugin-dialog";
 
-  let banner_path = $state("");
-  let preview_url = $state("");
+  let long_banner_path = $state("");
+  let long_banner_preview_url = $state("");
+  let square_banner_path = $state("");
+  let square_banner_preview_url = $state("");
   let msg = $state("");
   
-  async function pick_banner_file() {
+  async function pick_long_banner_file() {
     try {
       const selected = await open({
         multiple: false,
@@ -17,25 +19,68 @@
       });
 
       if (selected) {
-        banner_path = selected;
-        await invoke("set_banner_path", { path: banner_path });
-        preview_url = convertFileSrc(banner_path);
+        long_banner_path = selected;
+        await invoke("set_long_banner_path", { path: long_banner_path });
+        long_banner_preview_url = convertFileSrc(long_banner_path);
       }
     } catch (error) {
-      msg = `Error selecting banner: ${error}`;
+      msg = `Error selecting long banner: ${error}`;
+    }
+  }
+
+  async function pick_square_banner_file() {
+    try {
+      const selected = await open({
+        multiple: false,
+        filters: [{
+          name: 'Image',
+          extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp']
+        }]
+      });
+
+      if (selected) {
+        square_banner_path = selected;
+        await invoke("set_square_banner_path", { path: square_banner_path });
+        square_banner_preview_url = convertFileSrc(square_banner_path);
+      }
+    } catch (error) {
+      msg = `Error selecting square banner: ${error}`;
     }
   }
 </script>
 
-<div class="container">
-  <div class="banner-card">
-
-      {#if preview_url}
+<main class="container">
+  <!-- <p>{msg}</p> -->
+  <div class="slider-grid">
+    <div class="slider-card">
+    <header>
+            <div class="label-container">
+              <span class="label">Square banner image</span>
+              <span class="help-icon" data-tooltip="Upload a square image (1:1 aspect ratio).">?</span>
+            </div>
+          </header>
+      {#if square_banner_preview_url}
         <div class="preview-container">
-          <img src={preview_url} alt="Team banner preview" class="logo-preview" />
+          <img src={square_banner_preview_url} alt="Team logo preview" class="logo-preview" />
         </div>
       {/if}
-      <button style="width: 400px;" onclick={pick_banner_file}>Find your banner file</button>
-      <button style="width: 400px;" onclick={() => {banner_path = ""; preview_url = ""; invoke("set_banner_path", { path: banner_path });}}>Reset</button>
+      <button onclick={pick_square_banner_file}>Find file</button>
+      <button onclick={() => {square_banner_path = ""; square_banner_preview_url = ""; invoke("set_square_banner_path", { path: square_banner_path });}}>Reset</button>
+    </div>
+    <div class="slider-card">
+    <header>
+            <div class="label-container">
+              <span class="label">Rectangular banner image</span>
+              <span class="help-icon" data-tooltip="Upload a rectangular image (2:1 aspect ratio ideally).">?</span>
+            </div>
+          </header>
+      {#if long_banner_preview_url}
+        <div class="preview-container">
+          <img src={long_banner_preview_url} alt="Team logo preview" class="logo-preview" />
+        </div>
+      {/if}
+      <button onclick={pick_long_banner_file}>Find file</button>
+      <button onclick={() => {long_banner_path = ""; long_banner_preview_url = ""; invoke("set_long_banner_path", { path: long_banner_path });}}>Reset</button>
     </div>
 </div>
+</main>
