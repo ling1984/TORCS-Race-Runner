@@ -2,10 +2,9 @@
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
   import { open, message } from "@tauri-apps/plugin-dialog";
   import type { SliderConfig, DriverParams } from '$lib/types';
-  import { team_logo_path, running, injectableMethod } from '$lib/stores';
+  import { team_name, team_logo_path, running, injectableMethod } from '$lib/stores';
   
 
-  let team_name = $state("");
   let msg = $state("");
   let preview_url = $state("");
 
@@ -52,7 +51,7 @@
         sliders[4].value5 as number,
       ],
       traction_control: sliders[5].value as boolean,
-      team_name: team_name,
+      team_name: $team_name,
     };
   }
 
@@ -202,27 +201,27 @@
       {/if}
     {/each}
     <div class="slider-card">
-    <header>
-            <div class="label-container">
-              <span class="label">Team name</span>
-              <span class="help-icon" data-tooltip="Choose your team name.">?</span>
-            </div>
-          </header>
-          <input id="target-input" autocomplete="off" placeholder="Enter your team name..." bind:value={team_name} />
-          <button onclick={() => team_name = ""}>Reset</button>
+      <header>
+        <div class="label-container">
+          <span class="label">Team name</span>
+          <span class="help-icon" data-tooltip="Choose your team name.">?</span>
+        </div>
+      </header>
+      <input id="target-input" autocomplete="off" placeholder="Enter your team name..." bind:value={$team_name} />
+      <button onclick={() => team_name.set("")}>Reset</button>
     </div>
     <div class="slider-card">
-    <header>
-            <div class="label-container">
-              <span class="label">Team logo</span>
-              <span class="help-icon" data-tooltip="Upload your team logo. 1.85:1 aspect ratio and 61x33 pixels is recommended.">?</span>
-            </div>
-          </header>
-      {#if preview_url}
-        <div class="preview-container">
-          <img src={preview_url} alt="Team logo preview" class="logo-preview" />
+      <header>
+        <div class="label-container">
+          <span class="label">Team logo</span>
+          <span class="help-icon" data-tooltip="Upload your team logo. 1.85:1 aspect ratio and 61x33 pixels is recommended.">?</span>
         </div>
-      {/if}
+      </header>
+    {#if preview_url}
+      <div class="preview-container">
+        <img src={preview_url} alt="Team logo preview" class="logo-preview" />
+      </div>
+    {/if}
       <button onclick={pick_logo_file}>Find file</button>
       <button onclick={() => {team_logo_path.set(""); preview_url = ""; invoke("set_logo_path", { path: $team_logo_path });}}>Reset</button>
     </div>
