@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { running, onStartDriver } from '$lib/stores';
+  import { injectableMethod } from '$lib/stores';
   import { goto } from '$app/navigation';
   import { ArrowLeft, Save } from '@lucide/svelte';
 
   async function handleButtonClick(event: Event) {
-    const handler = $onStartDriver;
+    const handler = $injectableMethod;
     await handler(event);
   }
 
@@ -19,12 +19,8 @@
       <ArrowLeft size={24}/>
     </button>
   <h1>Edit Banner</h1>
-    <button class="btn-drive {$running ? 'running' : 'stopped'}" type="button" onclick={handleButtonClick}>
-      {#if $running}
-        <Save size={24} />
-      {:else}
-        <Save size={24} />
-      {/if}
+    <button class="btn-drive" type="button" onclick={handleButtonClick}>
+      <Save size={24} />
     </button>
 </header>
 

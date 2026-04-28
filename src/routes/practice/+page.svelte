@@ -2,7 +2,7 @@
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
   import { open, message } from "@tauri-apps/plugin-dialog";
   import type { SliderConfig, DriverParams } from '$lib/types';
-  import { running, onStartDriver } from '$lib/stores';
+  import { running, injectableMethod } from '$lib/stores';
   
 
   let team_name = $state("");
@@ -11,7 +11,7 @@
   let preview_url = $state("");
 
   $effect(() => {
-    onStartDriver.set(handle_start_driver_clicked);
+    injectableMethod.set(handle_start_driver_clicked);
   });
 
   async function pick_logo_file() {
@@ -62,8 +62,7 @@
 
   async function handle_start_driver_clicked(event: Event) {
     event.preventDefault();
-    const currentRunning = await new Promise(resolve => running.subscribe(resolve)());
-    if (!currentRunning) {
+    if (!$running) {
       try {
         const params = collectParams();
         await invoke("handle_params", { params });
