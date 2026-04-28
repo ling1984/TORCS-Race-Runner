@@ -18,14 +18,14 @@
 
     try {
       // invoke the Rust command to save the banner image path
-      await invoke("change_banners", { path: $banner_path });
+      await invoke("change_banners", { bannerPath: $banner_path });
       // set the save button to green in +layout.svelte
       is_banner_saved.set(true);
-      await message("Banner image saved successfully!", { title: "Success", kind: "info" });
+      await message("Banner images updated successfully!", { title: "Success", kind: "info" });
     } 
     catch (error) {
       msg = `Error: ${error}`;
-      await message(`Failed to save banner image: ${error}`, { title: "Error", kind: "error" });
+      await message(`Failed to update banner images: ${error}`, { title: "Error", kind: "error" });
     }
   }
 

@@ -33,7 +33,7 @@ The map uses a mix of .png files and .rgb files from different directories, howe
 
 **Kilo + EJR Truck:** treeRNS2.png, [0]
 
-**Inferno Team truck:** TRUCK07.png, 128x64, (0,64)
+**Inferno Team truck:** TRUCK07.png, 128x64, (0,64) (flipped horizontally)
 
 **Oil banner (3/4 row)** 64PASS1.png, 512x123, (0, 228)
 
