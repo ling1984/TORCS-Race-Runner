@@ -1,9 +1,12 @@
 <script lang="ts">
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
   import { message, open } from "@tauri-apps/plugin-dialog";
-  import { is_banner_saved, banner_preview_url, injectableMethod } from '$lib/stores';
+  import { is_banner_saved, banner_path, injectableMethod } from '$lib/stores';
 
-  let banner_path = $state("");
+  let preview_url = $state("");
+  if ($banner_path) {
+    preview_url = convertFileSrc($banner_path);
+  }
   let msg = $state("");
 
   $effect(() => {
@@ -15,7 +18,7 @@
 
     try {
       // invoke the Rust command to save the banner image path
-      await invoke("change_banners", { path: banner_path });
+      await invoke("change_banners", { path: $banner_path });
       // set the save button to green in +layout.svelte
       is_banner_saved.set(true);
       await message("Banner image saved successfully!", { title: "Success", kind: "info" });
@@ -37,8 +40,8 @@
       });
 
       if (selected) {
-        banner_path = selected;
-        banner_preview_url.set(convertFileSrc(banner_path));
+        banner_path.set(selected);
+        preview_url = convertFileSrc($banner_path);
         is_banner_saved.set(false);
       }
     } catch (error) {
@@ -57,14 +60,14 @@
               <span class="help-icon" data-tooltip="Upload a banner image (512x256 or 2:1 aspect ratio ideally).">?</span>
             </div>
           </header>
-      {#if $banner_preview_url}
+      {#if preview_url}
         <div class="preview-container">
-          <img src={$banner_preview_url} alt="Team logo preview" class="logo-preview" />
+          <img src={preview_url} alt="Team logo preview" class="logo-preview" />
         </div>
       {/if}
       <div class="container" style="align-items: center; display: flex; flex-direction: column; gap: 1rem">
       <button style="width : 400px" onclick={pick_banner_file}>Find file</button>
-      <button style="width : 400px" onclick={() => {banner_path = ""; banner_preview_url.set(""); is_banner_saved.set(false);}}>Reset</button>
+      <button style="width : 400px" onclick={() => {banner_path.set(""); preview_url=""; is_banner_saved.set(false);}}>Reset</button>
       </div>
     </div>
 </div>

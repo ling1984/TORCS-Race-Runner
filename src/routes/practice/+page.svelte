@@ -2,13 +2,16 @@
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
   import { open, message } from "@tauri-apps/plugin-dialog";
   import type { SliderConfig, DriverParams } from '$lib/types';
-  import { running, injectableMethod } from '$lib/stores';
+  import { team_logo_path, running, injectableMethod } from '$lib/stores';
   
 
   let team_name = $state("");
   let msg = $state("");
-  let logo_path = $state("");
   let preview_url = $state("");
+
+  if ($team_logo_path) {
+    preview_url = convertFileSrc($team_logo_path);
+  }
 
   $effect(() => {
     injectableMethod.set(handle_start_driver_clicked);
@@ -25,9 +28,9 @@
       });
 
       if (selected) {
-        logo_path = selected;
-        await invoke("set_logo_path", { path: logo_path });
-        preview_url = convertFileSrc(logo_path);
+        team_logo_path.set(selected);
+        await invoke("set_logo_path", { path: $team_logo_path });
+        preview_url = convertFileSrc($team_logo_path);
       }
     } catch (error) {
       msg = `Error selecting logo: ${error}`;
@@ -221,7 +224,7 @@
         </div>
       {/if}
       <button onclick={pick_logo_file}>Find file</button>
-      <button onclick={() => {logo_path = ""; preview_url = ""; invoke("set_logo_path", { path: logo_path });}}>Reset</button>
+      <button onclick={() => {team_logo_path.set(""); preview_url = ""; invoke("set_logo_path", { path: $team_logo_path });}}>Reset</button>
     </div>
   </div>
 </main>
