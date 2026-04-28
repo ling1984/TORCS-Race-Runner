@@ -2,16 +2,18 @@
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
   import { open, message } from "@tauri-apps/plugin-dialog";
   import type { SliderConfig, DriverParams } from '$lib/types';
-  import { running, onStartDriver } from '$lib/stores';
+  import { team_name, team_logo_path, running, injectableMethod } from '$lib/stores';
   
 
-  let team_name = $state("");
   let msg = $state("");
-  let logo_path = $state("");
   let preview_url = $state("");
 
+  if ($team_logo_path) {
+    preview_url = convertFileSrc($team_logo_path);
+  }
+
   $effect(() => {
-    onStartDriver.set(handle_start_driver_clicked);
+    injectableMethod.set(handle_start_driver_clicked);
   });
 
   async function pick_logo_file() {
@@ -25,9 +27,9 @@
       });
 
       if (selected) {
-        logo_path = selected;
-        await invoke("set_logo_path", { path: logo_path });
-        preview_url = convertFileSrc(logo_path);
+        team_logo_path.set(selected);
+        await invoke("set_logo_path", { path: $team_logo_path });
+        preview_url = convertFileSrc($team_logo_path);
       }
     } catch (error) {
       msg = `Error selecting logo: ${error}`;
@@ -49,7 +51,7 @@
         sliders[4].value5 as number,
       ],
       traction_control: sliders[5].value as boolean,
-      team_name: team_name,
+      team_name: $team_name,
     };
   }
 
@@ -62,13 +64,11 @@
 
   async function handle_start_driver_clicked(event: Event) {
     event.preventDefault();
-    const currentRunning = await new Promise(resolve => running.subscribe(resolve)());
-    if (!currentRunning) {
+    if (!$running) {
       try {
         const params = collectParams();
         await invoke("handle_params", { params });
         msg = await invoke("start_racer");
-        msg = "Started";
         running.set(true);
         showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
       } catch (error) {
@@ -201,29 +201,29 @@
       {/if}
     {/each}
     <div class="slider-card">
-    <header>
-            <div class="label-container">
-              <span class="label">Team name</span>
-              <span class="help-icon" data-tooltip="Choose your team name.">?</span>
-            </div>
-          </header>
-          <input id="target-input" autocomplete="off" placeholder="Enter your team name..." bind:value={team_name} />
-          <button onclick={() => team_name = ""}>Reset</button>
+      <header>
+        <div class="label-container">
+          <span class="label">Team name</span>
+          <span class="help-icon" data-tooltip="Choose your team name.">?</span>
+        </div>
+      </header>
+      <input id="target-input" autocomplete="off" placeholder="Enter your team name..." bind:value={$team_name} />
+      <button onclick={() => team_name.set("")}>Reset</button>
     </div>
     <div class="slider-card">
-    <header>
-            <div class="label-container">
-              <span class="label">Team logo</span>
-              <span class="help-icon" data-tooltip="Upload your team logo. 1.85:1 aspect ratio and 61x33 pixels is recommended.">?</span>
-            </div>
-          </header>
-      {#if preview_url}
-        <div class="preview-container">
-          <img src={preview_url} alt="Team logo preview" class="logo-preview" />
+      <header>
+        <div class="label-container">
+          <span class="label">Team logo</span>
+          <span class="help-icon" data-tooltip="Upload your team logo. 1.85:1 aspect ratio and 61x33 pixels is recommended.">?</span>
         </div>
-      {/if}
-      <button onclick={pick_logo_file}>Find your logo file</button>
-      <button onclick={() => {logo_path = ""; preview_url = ""; invoke("set_logo_path", { path: logo_path });}}>Reset</button>
+      </header>
+    {#if preview_url}
+      <div class="preview-container">
+        <img src={preview_url} alt="Team logo preview" class="logo-preview" />
+      </div>
+    {/if}
+      <button onclick={pick_logo_file}>Find file</button>
+      <button onclick={() => {team_logo_path.set(""); preview_url = ""; invoke("set_logo_path", { path: $team_logo_path });}}>Reset</button>
     </div>
   </div>
 </main>

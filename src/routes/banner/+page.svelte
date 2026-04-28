@@ -1,12 +1,35 @@
-<script>
+<script lang="ts">
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
-  import { open } from "@tauri-apps/plugin-dialog";
+  import { message, open } from "@tauri-apps/plugin-dialog";
+  import { is_banner_saved, banner_path, injectableMethod } from '$lib/stores';
 
-  let logo_path = $state("");
   let preview_url = $state("");
+  if ($banner_path) {
+    preview_url = convertFileSrc($banner_path);
+  }
   let msg = $state("");
+
+  $effect(() => {
+    injectableMethod.set(save_banner_image);
+  });
   
-  async function pick_logo_file() {
+  async function save_banner_image(event: Event) {
+    event.preventDefault();
+
+    try {
+      // invoke the Rust command to save the banner image path
+      await invoke("change_banners", { bannerPath: $banner_path });
+      // set the save button to green in +layout.svelte
+      is_banner_saved.set(true);
+      await message("Banner images updated successfully!", { title: "Success", kind: "info" });
+    } 
+    catch (error) {
+      msg = `Error: ${error}`;
+      await message(`Failed to update banner images: ${error}`, { title: "Error", kind: "error" });
+    }
+  }
+
+  async function pick_banner_file() {
     try {
       const selected = await open({
         multiple: false,
@@ -17,25 +40,35 @@
       });
 
       if (selected) {
-        logo_path = selected;
-        await invoke("set_logo_path", { path: logo_path });
-        preview_url = convertFileSrc(logo_path);
+        banner_path.set(selected);
+        preview_url = convertFileSrc($banner_path);
+        is_banner_saved.set(false);
       }
     } catch (error) {
-      msg = `Error selecting logo: ${error}`;
+      msg = `Error selecting banner: ${error}`;
     }
   }
 </script>
 
-<div class="slider-grid">
-  <div class="slider-card">
-
+<main class="container">
+  <p>{msg}</p>
+  <div class="slider-grid">
+    <div class="slider-card">
+    <header>
+            <div class="label-container">
+              <span class="label">Banner image</span>
+              <span class="help-icon" data-tooltip="Upload a banner image (512x256 or 2:1 aspect ratio ideally).">?</span>
+            </div>
+          </header>
       {#if preview_url}
         <div class="preview-container">
           <img src={preview_url} alt="Team logo preview" class="logo-preview" />
         </div>
       {/if}
-      <button onclick={pick_logo_file}>Find your logo file</button>
-      <button onclick={() => {logo_path = ""; preview_url = ""; invoke("set_logo_path", { path: logo_path });}}>Reset</button>
+      <div class="container" style="align-items: center; display: flex; flex-direction: column; gap: 1rem">
+      <button style="width : 400px" onclick={pick_banner_file}>Find file</button>
+      <button style="width : 400px" onclick={() => {banner_path.set(""); preview_url=""; is_banner_saved.set(false);}}>Reset</button>
+      </div>
     </div>
 </div>
+</main>

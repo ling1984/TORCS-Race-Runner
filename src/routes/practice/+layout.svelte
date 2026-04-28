@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { running, onStartDriver } from '$lib/stores';
+  import { running, injectableMethod } from '$lib/stores';
   import { goto } from '$app/navigation';
   import { ArrowLeft, Play, Pause } from '@lucide/svelte';
 
   async function handleButtonClick(event: Event) {
-    const handler = $onStartDriver;
+    const handler = $injectableMethod;
     await handler(event);
   }
 
