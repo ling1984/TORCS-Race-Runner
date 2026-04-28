@@ -18,12 +18,21 @@ The map uses a mix of .png files and .rgb files from different directories, howe
 
 **Oil banner (3/4 row)** 64PASS1.png, 512x123, (0, 228)
 
+**Corkscrew Banner** 64PASS1.png, 492x71, (10, 133)
+
+**Small corkscrew banner** 64PASS1.png, 211x124, (216, 376)
+
+**Side corkscrew banner** 64PASS9.png, 211x119, (0,198)
+
 **Oli's Oil banner (1/3 row):** 64PASS6.png, 512x158, (0,0)
 
 [0] - this one is complicated because the wheels, parts of the lorry etc are on top of the logo.
 
 Body - 176x54, top: (0, 6) and (0, 67), bottom:(0, 134) and (0,195)
 Back - 36x47, top: (182, 10), bottom: (182, 138)
+
+Body-top is flipped on Y-axis.
+Back is rotated -90 degrees.
 
 ## Testing
 
