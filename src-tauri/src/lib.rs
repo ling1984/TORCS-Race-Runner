@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 mod team_name;
 mod car_logo;
 mod sgi_encoder;
+mod track_banners;
 
 #[derive(Serialize, Deserialize, Clone)]
 struct DriverParams {
@@ -130,7 +131,7 @@ pub fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![handle_params, start_racer, stop_racer, set_logo_path])
+        .invoke_handler(tauri::generate_handler![handle_params, start_racer, stop_racer, set_logo_path, track_banners::change_banners])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
