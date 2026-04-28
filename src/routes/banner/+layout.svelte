@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { injectableMethod } from '$lib/stores';
+  import { is_banner_saved, injectableMethod } from '$lib/stores';
   import { goto } from '$app/navigation';
   import { ArrowLeft, Save } from '@lucide/svelte';
 
@@ -19,7 +19,7 @@
       <ArrowLeft size={24}/>
     </button>
   <h1>Edit Banner</h1>
-    <button class="btn-drive" type="button" onclick={handleButtonClick}>
+    <button class="btn-drive {$is_banner_saved ? 'saved' : 'unsaved'}" type="button" onclick={handleButtonClick}>
       <Save size={24} />
     </button>
 </header>

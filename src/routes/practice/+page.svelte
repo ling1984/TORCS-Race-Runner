@@ -67,7 +67,6 @@
         const params = collectParams();
         await invoke("handle_params", { params });
         msg = await invoke("start_racer");
-        msg = "Started";
         running.set(true);
         showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
       } catch (error) {

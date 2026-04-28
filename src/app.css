@@ -444,7 +444,7 @@ button {
     cursor: pointer;
     transition: background 0.2s;
   }
-
+  
   
 /* STOP (running=true) */
 .btn-drive.running {
@@ -466,6 +466,30 @@ button {
   background: #27ae60;
 }
 .btn-drive.stopped:active {
+  background: #1e8449;
+  transform: scale(0.97);
+}
+
+/* unsaved FOR BANNER */
+.btn-drive.unsaved {
+  background: #007bff;
+}
+.btn-drive.unsaved:hover {
+  background: #0159b7;
+}
+.btn-drive.unsaved:active {
+  background: #00448d;
+  transform: scale(0.97);
+}
+
+/* saved FOR BANNER */
+.btn-drive.saved {
+  background: #2ecc71;
+}
+.btn-drive.saved:hover {
+  background: #27ae60;
+}
+.btn-drive.saved:active {
   background: #1e8449;
   transform: scale(0.97);
 }
