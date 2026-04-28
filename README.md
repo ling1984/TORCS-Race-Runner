@@ -8,7 +8,7 @@ It uses Rust Tauri + Svelte Typescript.
 ## Banner
 
 The banner page uses several hardcoded paths that are relevant to banner images on TORC's Corkscrew track.
-The map uses a mix of .png files and .rgb files from different directories, however all banner images are .pngs inside ""torcs\tracks\road\corkscrew\"
+The map uses a mix of .png files and .rgb files from different directories, however all banner images are .pngs inside "torcs\tracks\road\corkscrew\"
 
 **Kilo banner over track:** kilo.png, 512x256, (0, 0)
 

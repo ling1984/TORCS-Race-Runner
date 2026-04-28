@@ -25,7 +25,7 @@ print("copy path: ", copy_path)
 
 base = Image.open(copy_path)      # .rgb image
 
-if image_path is None:
+if image_path:
     overlay = Image.open(image_path)  # Can be any format
     print(image_path, " opened successfully.")
     overlay = overlay.convert(base.mode) # convert to .rgb
