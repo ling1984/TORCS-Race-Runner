@@ -97,9 +97,17 @@
   <!-- The title and two cards -->
 
   <div class="content">
-      <h1>{$current_team.name ? $current_team.name : "Team Name"}</h1>
-      
-
+    
+    <!-- Header (Team Name) -->
+    <div class="content-header">
+      <input
+        type="text"
+        class="team-name-input"
+        bind:value={$current_team.name}
+        placeholder="Team Name"
+      />
+    </div>
+    <!-- Slider Grid -->
     <div class="slider-grid">
       <!-- // DRIVER SCRIPT -->
       <div class="slider-card">
@@ -138,14 +146,50 @@
 <style>
   .layout {
     display: flex;
+    align-items: flex-start;
+    gap: 0;
   }
 
   .tabs {
     display: flex;
     flex-direction: column;
-    /* margin-top: 40px; */
+    flex-shrink: 0;
   }
   
+  .content-header {
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+
+  .team-name-input {
+    margin: 0;
+    padding: 8px 12px;
+    font-size: 2rem;
+    font-weight: bold;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .team-name-input:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(100, 150, 255, 0.3);
+  }
+
+  .team-name-input:focus {
+    outline: none;
+    background: rgba(100, 150, 255, 0.1);
+    border-color: rgba(100, 150, 255, 0.8);
+    box-shadow: 0 0 8px rgba(100, 150, 255, 0.3);
+  }
+
+  .team-name-input::placeholder {
+    color: rgba(46, 46, 46, 0.5);
+  }
 
   .tab-button {
     width: 80px;
@@ -191,6 +235,8 @@
   }
 
   .content {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     border: 1px solid #666;
     padding: 24px;
