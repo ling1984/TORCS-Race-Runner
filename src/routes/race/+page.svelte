@@ -110,7 +110,7 @@
     <!-- Slider Grid -->
     <div class="slider-grid">
       <!-- // DRIVER SCRIPT -->
-      <div class="slider-card">
+      <div class="slider-card" style="box-shadow: ;">
         <header>
           <div class="label-container">
             <span class="label">Driver script</span>
@@ -128,9 +128,9 @@
             <span class="help-icon" data-tooltip="Upload your team logo. 1.85:1 aspect ratio and 61x33 pixels is recommended.">?</span>
           </div>
         </header>
-      {#if preview_url}
+      {#if $current_team.logo_path}
         <div class="preview-container">
-          <img src={preview_url} alt="Team logo preview" class="logo-preview" />
+          <img src={convertFileSrc($current_team.logo_path)} alt="Team logo preview" class="logo-preview" />
         </div>
       {/if}
         <button onclick={pick_logo_file}>Find file</button>
@@ -148,17 +148,11 @@
     display: flex;
     align-items: flex-start;
     gap: 0;
-  }
 
-  .tabs {
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
   }
   
   .content-header {
-    margin-bottom: 12px;
-    margin-top: 24px;
+    margin-bottom: 24px;
   }
 
   .team-name-input {
@@ -168,7 +162,7 @@
     font-weight: bold;
     border: 2px solid transparent;
     border-radius: 4px;
-    background: transparent;
+    background: white;
     color: inherit;
     font-family: inherit;
     cursor: pointer;
@@ -188,26 +182,28 @@
   }
 
   .team-name-input::placeholder {
-    color: rgba(46, 46, 46, 0.5);
+    color: rgba(27, 27, 27, 0.55);
+  }
+
+  .tabs {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
   }
 
   .tab-button {
     width: 80px;
 
-    background: #222;
-    color: white;
-
-    border: 1px solid #666;
-    border-right: 1px solid #666;
-
     border-radius: 0;
     box-shadow: none;
 
     padding: 12px;
-
+/* 
     transition:
     background 0.15s,
-    border-color 0.15s;
+    border-color 0.15s; */
+    box-shadow: -4px 0 8px rgba(0,0,0,0.15);
+    min-width: fit-content;
   }
 
   .tab-button:first-child {
@@ -216,17 +212,17 @@
 
   .tab-button:last-child {
     border-bottom-left-radius: 8px;
+    box-shadow: -4px 4px 8px rgba(0,0,0,0.15);
   }
 
   .tab-button:hover {
-    background: #333;
-    border-color: #888;
+    border-color: #ececec;
   }
 
   .tab-button.selected {
-    background: #111;
-
-    border-right: none;
+    background-color: #ececec;
+    outline: 2px solid #0505051b;
+    width: calc(100% - 2px);
 
     margin-right: -1px;
 
@@ -234,11 +230,22 @@
     z-index: 2;
   }
 
+  .tab-button.selected::after { box-shadow:none;content: "";
+   position: absolute; top: -1px; right: -5px;
+    width: 6px; height: calc(100% + 2px);
+     background: #ececec; }
+
   .content {
     display: flex;
     flex-direction: column;
     flex: 1;
-    border: 1px solid #666;
+    outline: 2px solid #0505051b;
+    background-color: #ececec;
     padding: 24px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    box-shadow: 4px 0 8px rgba(0,0,0,0.15),
+                0 4px 8px rgba(0,0,0,0.15);
   }
 </style>
