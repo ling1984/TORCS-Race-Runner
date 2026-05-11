@@ -6,9 +6,9 @@ export const running = writable(false);
 export const team_logo_path = writable("");
 export const team_name = writable("");
 
-// running
+// race
 export const race_running = writable(false);
-
+export const curr_team_index = writable(0);
 export const race_teams = Array.from({ length: 6 }, () =>
 	writable<RaceTeam>({
 		name: '',
