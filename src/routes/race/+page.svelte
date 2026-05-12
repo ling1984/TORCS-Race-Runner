@@ -37,7 +37,7 @@
     }
   }
 
-  async function pick_driver_script_file() {
+  async function pick_script_file() {
     try {
       const selected = await open({
         multiple: false,
@@ -48,7 +48,7 @@
       });
 
       if (selected) {
-        current_team.update((team) => ({ ...team, driver_script_path: selected }));
+        current_team.update((team) => ({ ...team, script_path: selected }));
       }
     } catch (error) {
       msg = `Error selecting driver script: ${error}`;
@@ -76,7 +76,7 @@
       // }
   }
   function resetCurrentTeam() {
-    current_team.update((team) => ({ ...team, name: "", logo_path: "", driver_script_path: "" }));
+    current_team.update((team) => ({ ...team, name: "", logo_path: "", script_path: "" }));
   }
 </script>
 
@@ -117,8 +117,14 @@
             <span class="help-icon" data-tooltip="Upload your driver script (.py file only).">?</span>
           </div>
         </header>
-        <button onclick={pick_driver_script_file}>Find file</button>
-        <button onclick={() => current_team.update((team) => ({ ...team, driver_script_path: "" }))}>Reset</button>
+        {#if $current_team.script_path}
+        <div class="preview-container">
+          <img src="/python-file-logo.png" style="padding-left: 4px;" alt="Python file logo" class="logo-preview" />
+          <p class="script-name">{$current_team.script_path.split(/[\/\\]/).pop() || 'Script'}</p>
+        </div>
+        {/if}
+        <button onclick={pick_script_file}>Find file</button>
+        <button onclick={() => current_team.update((team) => ({ ...team, script_path: "" }))}>Reset</button>
       </div>
       <!-- // TEAM LOGO -->
       <div class="slider-card">
@@ -247,5 +253,16 @@
     border-bottom-left-radius: 8px;
     box-shadow: 4px 0 8px rgba(0,0,0,0.15),
                 0 4px 8px rgba(0,0,0,0.15);
+  }
+
+  .script-name {
+    margin: 8px 0 0 0;
+    text-align: center;
+    font-size: 1.25rem;
+    color: var(--color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 8px;
   }
 </style>
