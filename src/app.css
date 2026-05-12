@@ -34,6 +34,7 @@
 display: grid;
 gap: 1.5rem;
 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+/* background: #ececec; this is not the right place, but we need a background around the slider cards */
 }
 
 .slider-card {

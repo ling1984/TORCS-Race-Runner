@@ -68,7 +68,7 @@
       try {
         const params = collectParams();
         await invoke("handle_params", { params });
-        msg = await invoke("start_racer");
+        msg = await invoke("start_practice");
         running.set(true);
         showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
       } catch (error) {
@@ -78,7 +78,7 @@
     } 
     else {
       try {
-        msg = await invoke("stop_racer");
+        msg = await invoke("stop_practice");
         msg = "Stopped";
         running.set(false);
       } catch (error) {

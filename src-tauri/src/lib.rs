@@ -7,6 +7,35 @@ mod car_logo;
 mod sgi_encoder;
 mod track_banners;
 
+
+// race
+#[derive(Serialize, Deserialize, Clone)]
+struct RaceTeam {
+    name: String,
+    logo_path: String,
+    script_path: String,
+}
+#[tauri::command]
+fn start_race(race_teams: Vec<RaceTeam>) -> Result<(), String> {
+    // Deserialize and validate race teams
+    for (index, team) in race_teams.iter().enumerate() {
+        if team.name.is_empty() {
+            return Err(format!("Team {} has no name", index));
+        }
+        if team.script_path.is_empty() {
+            return Err(format!("Team {} has no script path", index));
+        }
+        println!("Team {}: {} - Logo: {} - Script: {}", 
+                 index, team.name, team.logo_path, team.script_path);
+    }
+    
+    // TODO: Implement race logic with the validated teams
+    Ok(())
+}
+
+
+// practice
+
 #[derive(Serialize, Deserialize, Clone)]
 struct DriverParams {
     target_speed: i32,
@@ -32,7 +61,7 @@ fn handle_params(params: DriverParams, state: State<DriverState>) -> Result<(), 
 }
 
 #[tauri::command]
-fn start_racer(state: State<DriverState>) -> Result<(), String> {    
+fn start_practice(state: State<DriverState>) -> Result<(), String> {    
     // Get the current driver process if it exists
     let mut driver_guard = state.driver.lock().unwrap();
     if driver_guard.is_some() {
@@ -107,7 +136,7 @@ fn set_logo_path(path: String, state: State<DriverState>) -> Result<(), String> 
 }
 
 #[tauri::command]
-fn stop_racer(state: State<DriverState>) -> Result<(), String> {
+fn stop_practice(state: State<DriverState>) -> Result<(), String> {
     let mut guard = state.driver.lock().unwrap();
 
     if let Some(child) = guard.as_mut() {
@@ -131,7 +160,7 @@ pub fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![handle_params, start_racer, stop_racer, set_logo_path, track_banners::change_banners])
+        .invoke_handler(tauri::generate_handler![start_race, handle_params, start_practice, stop_practice, set_logo_path, track_banners::change_banners])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { convertFileSrc } from "@tauri-apps/api/core";
+  import { convertFileSrc, invoke } from "@tauri-apps/api/core";
   import { open, message } from "@tauri-apps/plugin-dialog";
   import { race_teams, race_running, injectableMethod, curr_team_index } from '$lib/stores';
   
@@ -64,16 +64,14 @@
 
   async function handle_start_race(event: Event) {
     event.preventDefault();
-      // try {
-      //   const params = collectParams();
-      //   await invoke("handle_params", { params });
-      //   msg = await invoke("start_racer");
-      race_running.set(true);
-      //   showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
-      // } catch (error) {
-      //   msg = `Error: ${error}`;
-      //   showAlert(`Failed to start driver: ${error}`, "Error", "error");
-      // }
+      try {
+        msg = await invoke("start_race", {race_teams: race_teams});
+        race_running.set(true);
+        showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
+      } catch (error) {
+        msg = `Error: ${error}`;
+        showAlert(`Failed to start driver: ${error}`, "Error", "error");
+      }
   }
   function resetCurrentTeam() {
     current_team.update((team) => ({ ...team, name: "", logo_path: "", script_path: "" }));
