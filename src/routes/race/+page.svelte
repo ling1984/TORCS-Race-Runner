@@ -2,6 +2,7 @@
   import { convertFileSrc, invoke } from "@tauri-apps/api/core";
   import { open, message } from "@tauri-apps/plugin-dialog";
   import { race_teams, race_running, injectableMethod, curr_team_index } from '$lib/stores';
+  import { get } from "svelte/store";
   
 
   let msg = $state("");
@@ -65,7 +66,9 @@
   async function handle_start_race(event: Event) {
     event.preventDefault();
       try {
-        msg = await invoke("start_race", {race_teams: race_teams});
+        const teams = race_teams.map(team => get(team));
+        console.log(JSON.stringify(teams, null, 2));
+        msg = await invoke("start_race", {raceTeams: teams});
         race_running.set(true);
         showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
       } catch (error) {

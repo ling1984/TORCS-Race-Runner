@@ -2,6 +2,8 @@ use std::{process::{Child, Command}, sync::Mutex};
 use tauri::{State};
 use serde::{Deserialize, Serialize};
 
+use crate::{car_logo::reset_car_logo, car_logo::overlay_car_logo, team_name::update_team_name};
+
 mod team_name;
 mod car_logo;
 mod sgi_encoder;
@@ -17,19 +19,51 @@ struct RaceTeam {
 }
 #[tauri::command]
 fn start_race(race_teams: Vec<RaceTeam>) -> Result<(), String> {
-    // Deserialize and validate race teams
+    // TODO Replace this with a set path stored globally.
+    let exe_dir = std::env::current_exe()
+        .expect("can't get exe path")
+        .parent()
+        .expect("exe has no parent")
+        .to_path_buf();
+
+    // Handle team name and logo first
     for (index, team) in race_teams.iter().enumerate() {
-        if team.name.is_empty() {
-            return Err(format!("Team {} has no name", index));
+        
+        let index_u32 = index as u32;
+        update_team_name(index_u32, &team.name, &exe_dir)
+            .map_err(|e| e.to_string())?;
+
+        if team.logo_path.is_empty() {
+            match reset_car_logo(index_u32, &exe_dir) {
+                Ok(()) => println!("Car logo reset successfully."),
+                Err(e) => eprintln!("Car logo reset error: {e}"),
+            }
         }
-        if team.script_path.is_empty() {
-            return Err(format!("Team {} has no script path", index));
+        else {
+            match overlay_car_logo(index_u32, &team.logo_path, &exe_dir) {
+                Ok(()) => println!("Car logo for team {} overlayed successfully.", index_u32),
+                Err(e) => eprintln!("Car logo overlay error for team {}: {e}", index_u32),
+            }
         }
-        println!("Team {}: {} - Logo: {} - Script: {}", 
-                 index, team.name, team.logo_path, team.script_path);
     }
-    
-    // TODO: Implement race logic with the validated teams
+
+    // Then start each driver with a little delay in between.
+    for (index, team) in race_teams.iter().enumerate() {
+        if team.script_path.is_empty() {
+            eprintln!("No script path provided for team {}, skipping driver start.", index);
+            continue;
+        }
+        
+        let _child = Command::new("python")
+        .arg(&team.script_path)
+        .arg("--port")
+        .arg((3001 + index).to_string()) // assign ports 3001, 3002, ... to drivers
+        .spawn()
+        .map_err(|e| e.to_string())?;
+
+        std::thread::sleep(std::time::Duration::from_millis(50)); // delay between starting drivers
+    }
+
     Ok(())
 }
 
@@ -79,7 +113,7 @@ fn start_practice(state: State<DriverState>) -> Result<(), String> {
         .to_path_buf();
 
     // -- Change team name and logo before starting the driver --
-    team_name::update_team_name(0, &params.team_name, &exe_dir)
+    update_team_name(0, &params.team_name, &exe_dir)
         .map_err(|e| e.to_string())?;
 
     // Get the stored logo path and change car logo if it exists
@@ -87,12 +121,12 @@ fn start_practice(state: State<DriverState>) -> Result<(), String> {
 
     // If there is some logo path (we set None if ""), we change the logo
     if let Some(ref logo_path) = *logo_path_guard{
-        match car_logo::overlay_car_logo(0, logo_path, &exe_dir) {
+        match overlay_car_logo(0, logo_path, &exe_dir) {
             Ok(()) => println!("Car logo overlayed successfully."),
             Err(e) => eprintln!("Car logo overlay error: {e}"),
         }
     } else { // else reset
-        match car_logo::reset_car_logo(0, &exe_dir) {
+        match reset_car_logo(0, &exe_dir) {
             Ok(()) => println!("Car logo reset successfully."),
             Err(e) => eprintln!("Car logo reset error: {e}"),
         }
