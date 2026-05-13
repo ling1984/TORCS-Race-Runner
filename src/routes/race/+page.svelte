@@ -65,16 +65,25 @@
 
   async function handle_start_race(event: Event) {
     event.preventDefault();
+    if (!$race_running) {
       try {
         const teams = race_teams.map(team => get(team));
         console.log(JSON.stringify(teams, null, 2));
         msg = await invoke("start_race", {raceTeams: teams});
         race_running.set(true);
-        showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
+        showAlert("Race started successfully! Now in the TORCS window navigate: Race -> Race -> New Race, ", "Success", "info");
       } catch (error) {
         msg = `Error: ${error}`;
-        showAlert(`Failed to start driver: ${error}`, "Error", "error");
+        showAlert(`Failed to start race: ${error}`, "Error", "error");
       }
+    } else {
+      try {
+        msg = await invoke("stop_race");
+      } catch (error) {
+        msg = `Error: ${error}`;
+        showAlert(`Failed to stop race: ${error}`, "Error", "error");
+      }
+    }
   }
   function resetCurrentTeam() {
     current_team.update((team) => ({ ...team, name: "", logo_path: "", script_path: "" }));
