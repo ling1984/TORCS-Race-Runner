@@ -27,3 +27,17 @@ export interface DriverParams {
   traction_control: boolean;
   team_name: string;
 }
+
+
+export type RaceTeam = {
+  logo_path: string;
+  name: string;
+  script_path: string;
+}
+
+export interface DriverStatus {
+  index: number
+  team_name: string
+  state: string
+  port: string
+}

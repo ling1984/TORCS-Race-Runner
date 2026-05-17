@@ -5,6 +5,7 @@ pub fn update_team_name(car_index: u32, team_name: &str, exe_dir: &PathBuf) -> R
     let scr_server_xml_path = exe_dir.join("torcs").join("drivers").join("scr_server").join("scr_server.xml");
     
     let name = if team_name.is_empty() {
+        println!("Resetting team name to default.");
         format!("scr_server {}", car_index)
     } else {
         team_name.to_string()

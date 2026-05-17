@@ -68,7 +68,7 @@
       try {
         const params = collectParams();
         await invoke("handle_params", { params });
-        msg = await invoke("start_racer");
+        msg = await invoke("start_practice");
         running.set(true);
         showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
       } catch (error) {
@@ -78,7 +78,7 @@
     } 
     else {
       try {
-        msg = await invoke("stop_racer");
+        msg = await invoke("stop_practice");
         msg = "Stopped";
         running.set(false);
       } catch (error) {
@@ -87,7 +87,7 @@
       }
     }
   }
-  // Initialize your 6 sliders
+  
   let sliders: SliderConfig[] = $state([
     { id: '1', type: 'slider',label: 'Target speed', min: 0, max: 300, default: 100, value: 100, step: 1, help: 'Target speed in km/h. Increasing this makes the car go faster but may reduce stability.' },
     { id: '2', type: 'slider', label: 'Steer gain', min: 0, max: 100, default: 30, value: 30, step: 1, help: 'Steering sensitivity. Higher values make the car turn more aggressively.' },
