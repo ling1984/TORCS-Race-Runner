@@ -34,3 +34,10 @@ export type RaceTeam = {
   name: string;
   script_path: string;
 }
+
+export interface DriverStatus {
+  index: number
+  team_name: string
+  state: string
+  port: string
+}

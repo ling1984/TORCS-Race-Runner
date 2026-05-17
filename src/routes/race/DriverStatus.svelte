@@ -2,31 +2,29 @@
 	import { race_teams } from '$lib/stores';
     import { listen } from '@tauri-apps/api/event'
     import { get } from 'svelte/store';
+    import type { DriverStatus } from '$lib/types';
 
-    interface DriverStatus {
-        team_name: string
-        state: string
-        port: string
-    }
+    let drivers = $state<DriverStatus[]>([]);
 
-    let drivers: DriverStatus[] = []
-
-    const teams = race_teams.map(team => get(team));
-    teams.forEach(team => {
-        if (!(team.script_path === "")) {
+    race_teams.forEach((teamStore) => {
+        const team = get(teamStore); // Extracts the actual RaceTeam object
+        
+        if (team.script_path !== "") {
             drivers.push({
+                index: drivers.length,
                 team_name: team.name,
                 state: "waiting",
                 port: "",
             });
         }
-    })
+    });
     
     listen<DriverStatus>('driver-status', (event) => {
         const payload = event.payload
-
         drivers.forEach((driver) => {
-            if (driver.team_name === payload.team_name) {
+            if (driver.index === payload.index) {
+                console.log(`Updating driver ${driver.index} status:`, payload);
+                driver.team_name = payload.team_name
                 driver.state = payload.state
                 driver.port = payload.port
             }
@@ -38,7 +36,6 @@
     {#each drivers as driver, i}
       <div>
         { driver.team_name === "" ? `scr_driver ${i}` : driver.team_name } :
-        `scr_driver`
 
         {#if driver.state === 'connected'}
           <span style="color: green">

@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { RaceTeam } from './types';
+import type { RaceTeam, DriverStatus } from './types';
 
 // practice
 export const running = writable(false);

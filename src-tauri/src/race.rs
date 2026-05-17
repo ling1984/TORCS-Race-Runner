@@ -13,6 +13,7 @@ pub struct RaceTeam {
 
 #[derive(Clone, Serialize)]
 struct RaceDriverStatus {
+    index: usize,
     team_name: String,
     state: String,
     port: String,
@@ -92,13 +93,14 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) {
         let _ = app.emit(
         "driver-status",
         RaceDriverStatus {
+            index : index,
             team_name: "Hideous Racing".into(), // team.name.clone()
             state: "connected".into(),
             port: (3001 + index).to_string(),
         },
         );
 
-        std::thread::sleep(std::time::Duration::from_millis(500));
+        std::thread::sleep(std::time::Duration::from_secs(5));
 
         // let stdout = child.stdout.take().unwrap();
 
@@ -137,11 +139,6 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) {
         // }
     }
 }
-
-// fn extract_port(line: &str) -> &str {
-//     line.split_whitespace()
-//         .last().
-// }
 
 #[tauri::command]
 pub fn stop_race(race_state: tauri::State<RaceState>) -> Result<(), String> {
