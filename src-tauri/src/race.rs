@@ -1,4 +1,4 @@
-use std::process::Command;
+use std::{process::{Child, Command, Stdio}, sync::Mutex};
 use serde::{Deserialize, Serialize};
 use crate::{car_logo::{reset_car_logo, overlay_car_logo}, team_name::update_team_name};
 
@@ -10,8 +10,22 @@ pub struct RaceTeam {
     script_path: String,
 }
 
+#[derive(Clone, Serialize)]
+struct RaceDriverStatus {
+    driver_index: usize,
+    state: String,
+    port: Option<u16>,
+}
+
+struct RaceDriverManager {
+    children: Vec<Mutex<Child>>,
+    statuses: Vec<RaceDriverStatus>,
+    race_running: bool,
+}
+
+
 #[tauri::command]
-pub fn start_race(race_teams: Vec<RaceTeam>) -> Result<(), String> {
+pub fn start_race(app: tauri::AppHandle, race_teams: Vec<RaceTeam>) -> Result<(), String> {
     // TODO Replace this with a set path stored globally.
     let exe_dir = std::env::current_exe()
         .expect("can't get exe path")
@@ -39,7 +53,15 @@ pub fn start_race(race_teams: Vec<RaceTeam>) -> Result<(), String> {
             }
         }
     }
+    tauri::async_runtime::spawn(async move {
+        start_scripts(app, race_teams).await;
+    });
 
+    Ok(())
+}
+
+
+async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) {
     // Then start each driver with a little delay in between.
     for (index, team) in race_teams.iter().enumerate() {
         if team.script_path.is_empty() {
@@ -48,14 +70,14 @@ pub fn start_race(race_teams: Vec<RaceTeam>) -> Result<(), String> {
         }
         
         let _child = Command::new("python")
+        .arg("-u") // unbuffered output
         .arg(&team.script_path)
         .arg("--port")
         .arg((3001 + index).to_string()) // assign ports 3001, 3002, ... to drivers
+        .stdout(Stdio::piped())
         .spawn()
-        .map_err(|e| e.to_string())?;
+        .expect(&format!("Failed to start driver script for team {index}"));
 
         std::thread::sleep(std::time::Duration::from_millis(50)); // delay between starting drivers
     }
-
-    Ok(())
 }

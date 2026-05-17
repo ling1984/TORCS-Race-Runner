@@ -1,5 +1,5 @@
 use std::sync::Mutex;
-use crate::{track_banners::change_banners, practice::{handle_params, start_practice, stop_practice, set_logo_path, DriverState}, race::{start_race}};
+use crate::{track_banners::change_banners, practice::{handle_params, start_practice, stop_practice, set_logo_path, PracticeDriverState}, race::{start_race}};
 
 mod team_name;
 mod car_logo;
@@ -11,7 +11,7 @@ mod practice;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .manage(DriverState {
+        .manage(PracticeDriverState {
             driver: Mutex::new(None),
             params: Mutex::new(None),
             logo_path: Mutex::new(None),

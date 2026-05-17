@@ -5,14 +5,14 @@ use serde::{Deserialize, Serialize};
 use crate::{car_logo::{reset_car_logo, overlay_car_logo}, team_name::update_team_name};
 
 // pub because we initialise it in lib.rs
-pub struct DriverState {
+pub struct PracticeDriverState {
     pub driver: Mutex<Option<Child>>,
-    pub params: Mutex<Option<DriverParams>>,
+    pub params: Mutex<Option<PracticeDriverParams>>,
     pub logo_path: Mutex<Option<String>>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct DriverParams {
+pub struct PracticeDriverParams {
     target_speed: i32,
     steer_gain: i32,
     centering_gain: f64,
@@ -23,14 +23,14 @@ pub struct DriverParams {
 }
 
 #[tauri::command]
-pub fn handle_params(params: DriverParams, state: State<DriverState>) -> Result<(), String> {
+pub fn handle_params(params: PracticeDriverParams, state: State<PracticeDriverState>) -> Result<(), String> {
     let mut guard = state.params.lock().unwrap();
     *guard = Some(params);
     Ok(())
 }
 
 #[tauri::command]
-pub fn start_practice(state: State<DriverState>) -> Result<(), String> {    
+pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {    
     // Get the current driver process if it exists
     let mut driver_guard = state.driver.lock().unwrap();
     if driver_guard.is_some() {
@@ -90,7 +90,7 @@ pub fn start_practice(state: State<DriverState>) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn set_logo_path(path: String, state: State<DriverState>) -> Result<(), String> {
+pub fn set_logo_path(path: String, state: State<PracticeDriverState>) -> Result<(), String> {
     let mut guard = state.logo_path.lock().unwrap();
     println!("path is {}", path);
     
@@ -105,7 +105,7 @@ pub fn set_logo_path(path: String, state: State<DriverState>) -> Result<(), Stri
 }
 
 #[tauri::command]
-pub fn stop_practice(state: State<DriverState>) -> Result<(), String> {
+pub fn stop_practice(state: State<PracticeDriverState>) -> Result<(), String> {
     let mut guard = state.driver.lock().unwrap();
 
     if let Some(child) = guard.as_mut() {
