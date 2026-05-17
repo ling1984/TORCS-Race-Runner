@@ -1,4 +1,5 @@
 use std::sync::Mutex;
+use tokio::sync::Mutex as TokioMutex;
 use crate::{track_banners::change_banners, 
     practice::{handle_params, start_practice, stop_practice, set_logo_path, PracticeDriverState}, 
     race::{start_race, stop_race, RaceState}};
@@ -19,8 +20,8 @@ pub fn run() {
             logo_path: Mutex::new(None),
         })
         .manage(RaceState {
-            children: Mutex::new(Vec::new()),
-            race_running: Mutex::new(false),
+            children: TokioMutex::new(Vec::new()),
+            race_running: TokioMutex::new(false),
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())

@@ -1,5 +1,8 @@
-use std::{ process::{Child, Command, Stdio}, sync::Mutex };
+use std::process::Stdio;
 use serde::{Deserialize, Serialize};
+use tokio::process::{Child, Command};
+use tokio::io::{AsyncBufReadExt, BufReader};
+use tokio::sync::Mutex;
 use tauri::{Emitter, Manager};
 use crate::{car_logo::{overlay_car_logo, reset_car_logo}, team_name::update_team_name};
 
@@ -26,7 +29,7 @@ pub struct RaceState {
 
 
 #[tauri::command]
-pub fn start_race(race_teams: Vec<RaceTeam>, app: tauri::AppHandle) -> Result<(), String> {
+pub async fn start_race(race_teams: Vec<RaceTeam>, app: tauri::AppHandle) -> Result<(), String> {
     // TODO Replace this with a set path stored globally.
     let exe_dir = std::env::current_exe()
         .expect("can't get exe path")
@@ -56,22 +59,23 @@ pub fn start_race(race_teams: Vec<RaceTeam>, app: tauri::AppHandle) -> Result<()
     }
     let state_ref = app.state::<RaceState>();
     {
-        *state_ref.race_running.lock().unwrap() = true; // TODO change this
+        *state_ref.race_running.lock().await = true; // TODO change this
     }
     let app_clone = app.clone();
     tauri::async_runtime::spawn(async move {
-        start_scripts(app_clone, race_teams).await;
+        if let Err(e) = start_scripts(app_clone, race_teams).await {
+            eprintln!("Error starting scripts: {}", e);
+        }
     });
 
     Ok(())
 }
 
 
-async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) {
+async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) -> Result<(), Box<dyn std::error::Error>> {
 
     // Handling race state and locking children mutex to push new children to it.
     let race_state = app.state::<RaceState>();
-    let mut race_children = race_state.children.lock().unwrap();
 
     // Then start each driver with a little delay in between.
     for (index, team) in race_teams.iter().enumerate() {
@@ -80,75 +84,75 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) {
             continue;
         }
         
-        // let child = Command::new("python")
-        // .arg("-u") // unbuffered output
-        // .arg(&team.script_path)
-        // .arg("--port")
-        // .arg((3001 + index).to_string()) // assign ports 3001, 3002, ... to drivers
-        // .stdout(Stdio::piped())
-        // .spawn()
-        // .expect(&format!("Failed to start driver script for team {index}")); // TODO inefficent
-        
-        // race_children.push(child);
-        let _ = app.emit(
-        "driver-status",
-        RaceDriverStatus {
-            index : index,
-            team_name: "Hideous Racing".into(), // team.name.clone()
-            state: "connected".into(),
-            port: (3001 + index).to_string(),
-        },
-        );
-
+        let mut child = Command::new("python")
+        .arg("-u") // unbuffered output
+        .arg(&team.script_path)
+        .arg("--port")
+        .arg((3001 + index).to_string()) // assign ports 3001, 3002, ... to drivers
+        .stdout(Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("Failed to start driver script for team {index}: {e}"))?;
         
 
-        // let stdout = child.stdout.take().unwrap();
+        let stdout = child.stdout.take().ok_or("Failed to get stdout")?;
 
-        // let mut reader = BufReader::new(stdout).lines();
+        let mut reader = BufReader::new(stdout).lines();
 
-        // while let Ok(Some(line)) = reader.next_line().await {
-        //     println!("driver {}: {}", index, line);
+        while let Ok(Some(line)) = reader.next_line().await {
+            println!("{}",line);
 
-        //     if line.contains("Connecting on port") {
-        //         // let port = extract_port(&line);
+            if line.contains("Waiting for server on") { // format is: Waiting for server on 3001............
+                let port = extract_port(&line);
 
-        //         // let _ = app.emit(
-        //         //     "driver-status",
-        //         //     RaceDriverUpdate {
-        //         //         team_name: race_teams[index].name.clone(),
-        //         //         state: "connecting".into(),
-        //         //         port,
-        //         //     },
-        //         // );
-        //     }
+                let _ = app.emit(
+                    "driver-status",
+                    RaceDriverStatus {
+                        index : index,
+                        team_name: race_teams[index].name.clone(),
+                        state: "connecting".into(),
+                        port,
+                    },
+                );
+            }
 
-        //     if line.contains("Connected on port") {
-        //         // let port = extract_port(&line);
+            if line.contains("Client connected on") { // format is: Client connected on 3001..............
+                let port = extract_port(&line);
 
-        //         // let _ = app.emit(
-        //         //     "driver-status",
-        //         //     DriverStatus {
-        //         //         driver_index: index,
-        //         //         state: "connected".into(),
-        //         //         port,
-        //         //     },
-        //         // );
+                let _ = app.emit(
+                    "driver-status",
+                    RaceDriverStatus {
+                        index: index,
+                        team_name: race_teams[index].name.clone(),
+                        state: "connected".into(),
+                        port,
+                    },
+                );
 
-        //         break;
-        //     }
-        // }
+                break;
+            }
+        }
+        {
+            let mut race_children = race_state.children.lock().await;
+            race_children.push(child);
+        }
+
     }
+    Ok(())
+}
+
+fn extract_port(line: &str) -> String {
+    line.split("on ").nth(1).unwrap_or("").trim().into()
 }
 
 #[tauri::command]
-pub fn stop_race(race_state: tauri::State<RaceState>) -> Result<(), String> {
+pub async fn stop_race(race_state: tauri::State<'_, RaceState>) -> Result<(), String> {
     {
-        *race_state.race_running.lock().unwrap() = false;
+        *race_state.race_running.lock().await = false;
     }
-    let mut children = race_state.children.lock().unwrap();
+    let mut children = race_state.children.lock().await;
     for child in children.iter_mut() {
-        child.kill().map_err(|e| e.to_string())?;
-        child.wait().ok(); // cleanup
+        child.kill().await.map_err(|e| e.to_string())?;
+        child.wait().await.ok(); // cleanup
     }
     children.clear();
     Ok(())
