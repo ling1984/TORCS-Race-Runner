@@ -36,6 +36,8 @@
     } else {
       try {
         msg = await invoke("stop_race");
+        msg = "Stopped";
+        race_running.set(false);
       } catch (error) {
         msg = `Error: ${error}`;
         showAlert(`Failed to stop race: ${error}`, "Error", "error");
