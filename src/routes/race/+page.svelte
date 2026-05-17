@@ -1,11 +1,27 @@
 <script lang="ts">
   import RaceMenu from './RaceMenu.svelte';
-  import DriverStatus from './DriverStatus.svelte';
   import { invoke } from "@tauri-apps/api/core";
   import { message } from "@tauri-apps/plugin-dialog";
   import { race_teams, race_running, injectableMethod } from '$lib/stores';
   import { get } from "svelte/store";
-  
+  import { listen } from '@tauri-apps/api/event';
+  import DriverStatusPage from './DriverStatusPage.svelte';
+  import type { DriverStatus } from '$lib/types';
+
+  let drivers = $state<DriverStatus[]>([]);
+  // we need to set the listener immediately
+  listen<DriverStatus>('driver-status', (event) => {
+    const payload = event.payload;
+
+    const driver = drivers.find(d => d.index === payload.index);
+
+    if (driver) {
+      driver.team_name = payload.team_name;
+      driver.state = payload.state;
+      driver.port = payload.port;
+      drivers = drivers;
+    }
+  });
 
   let msg = $state("");
 
@@ -24,6 +40,7 @@
     event.preventDefault();
     if (!$race_running) {
       try {
+        setUpDrivers();
         const teams = race_teams.map(team => get(team));
         console.log(JSON.stringify(teams, null, 2));
         msg = await invoke("start_race", {raceTeams: teams});
@@ -44,7 +61,20 @@
       }
     }
   }
-  
+
+  function setUpDrivers() {
+    race_teams.forEach((teamStore) => {
+      const team = get(teamStore);
+      if (team.script_path !== '') {
+        drivers.push({
+          index: drivers.length,
+          team_name: team.name,
+          state: 'waiting',
+          port: ''
+        });
+      }
+      });
+  };
 </script>
 
 <main class="container">
@@ -53,6 +83,6 @@
       <RaceMenu 
         msg={msg}/>
   {:else}
-    <DriverStatus/>
+      <DriverStatusPage drivers={drivers}/>
   {/if}
 </main>

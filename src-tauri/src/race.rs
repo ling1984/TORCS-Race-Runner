@@ -80,16 +80,16 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) {
             continue;
         }
         
-        let child = Command::new("python")
-        .arg("-u") // unbuffered output
-        .arg(&team.script_path)
-        .arg("--port")
-        .arg((3001 + index).to_string()) // assign ports 3001, 3002, ... to drivers
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect(&format!("Failed to start driver script for team {index}")); // TODO inefficent
+        // let child = Command::new("python")
+        // .arg("-u") // unbuffered output
+        // .arg(&team.script_path)
+        // .arg("--port")
+        // .arg((3001 + index).to_string()) // assign ports 3001, 3002, ... to drivers
+        // .stdout(Stdio::piped())
+        // .spawn()
+        // .expect(&format!("Failed to start driver script for team {index}")); // TODO inefficent
         
-        race_children.push(child);
+        // race_children.push(child);
         let _ = app.emit(
         "driver-status",
         RaceDriverStatus {
@@ -100,7 +100,7 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) {
         },
         );
 
-        std::thread::sleep(std::time::Duration::from_secs(5));
+        
 
         // let stdout = child.stdout.take().unwrap();
 
