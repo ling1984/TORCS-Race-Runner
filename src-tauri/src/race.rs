@@ -128,6 +128,14 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) -> Res
                     },
                 );
 
+                // If we drop reader, we get an OS error in the python script if they print anything
+                // so we keep reader going in a background thread.
+                tokio::spawn(async move {
+                    while let Ok(Some(line)) = reader.next_line().await {
+                        println!("{}", line);
+                    }
+                });
+
                 break;
             }
         }
