@@ -63,6 +63,7 @@
   }
 
   function setUpDrivers() {
+    drivers = [];
     race_teams.forEach((teamStore) => {
       const team = get(teamStore);
       if (team.script_path !== '') {
@@ -74,11 +75,12 @@
         });
       }
       });
+    console.log("Drivers set up:", drivers);
   };
 </script>
 
 <main class="container">
-  <p>{msg}</p>
+  <!-- <p>{msg}</p> -->
   {#if !$race_running}
       <RaceMenu 
         msg={msg}/>
