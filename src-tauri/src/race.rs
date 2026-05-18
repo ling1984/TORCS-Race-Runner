@@ -24,7 +24,6 @@ struct RaceDriverStatus {
 
 pub struct RaceState {
     pub children: Mutex<Vec<Child>>,
-    pub race_running: Mutex<bool>,
 }
 
 
@@ -56,10 +55,6 @@ pub async fn start_race(race_teams: Vec<RaceTeam>, app: tauri::AppHandle) -> Res
                 Err(e) => eprintln!("Car logo overlay error for team {}: {e}", index_u32),
             }
         }
-    }
-    let state_ref = app.state::<RaceState>();
-    {
-        *state_ref.race_running.lock().await = true; // TODO change this
     }
     let app_clone = app.clone();
     tauri::async_runtime::spawn(async move {
@@ -93,13 +88,17 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) -> Res
         .spawn()
         .map_err(|e| format!("Failed to start driver script for team {index}: {e}"))?;
         
-
         let stdout = child.stdout.take().ok_or("Failed to get stdout")?;
+
+        {
+            let mut race_children = race_state.children.lock().await;
+            race_children.push(child);
+        }
 
         let mut reader = BufReader::new(stdout).lines();
 
         while let Ok(Some(line)) = reader.next_line().await {
-            println!("{}",line);
+            println!("scr_driver {}: {}", index, line);
 
             if line.contains("Waiting for server on") { // format is: Waiting for server on 3001............
                 let port = extract_port(&line);
@@ -132,16 +131,15 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) -> Res
                 // so we keep reader going in a background thread.
                 tokio::spawn(async move {
                     while let Ok(Some(line)) = reader.next_line().await {
-                        println!("{}", line);
+                        // format: . . Server has stopped the race on 3001. You were in 1 place.
+                        // if we have app reference, we could emit a finish event here with the final position?
+                        println!("scr_driver {}: {}", index, line);
+                        
                     }
                 });
 
                 break;
             }
-        }
-        {
-            let mut race_children = race_state.children.lock().await;
-            race_children.push(child);
         }
 
     }
@@ -154,14 +152,14 @@ fn extract_port(line: &str) -> String {
 
 #[tauri::command]
 pub async fn stop_race(race_state: tauri::State<'_, RaceState>) -> Result<(), String> {
-    {
-        *race_state.race_running.lock().await = false;
-    }
+    println!("Stopping race");
     let mut children = race_state.children.lock().await;
     for child in children.iter_mut() {
         child.kill().await.map_err(|e| e.to_string())?;
         child.wait().await.ok(); // cleanup
     }
+    println!("children pre-clearing: {}", children.len());
     children.clear();
+    println!("children len: {}", children.len());
     Ok(())
 }

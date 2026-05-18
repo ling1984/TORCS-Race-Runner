@@ -21,7 +21,6 @@ pub fn run() {
         })
         .manage(RaceState {
             children: TokioMutex::new(Vec::new()),
-            race_running: TokioMutex::new(false),
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
