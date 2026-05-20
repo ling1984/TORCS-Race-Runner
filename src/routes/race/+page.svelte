@@ -82,9 +82,10 @@
 <main class="container">
   <!-- <p>{msg}</p> -->
   {#if !$race_running}
-      <RaceMenu 
-        msg={msg}/>
+    <RaceMenu 
+      msg={msg}/>
   {:else}
-      <DriverStatusPage drivers={drivers}/>
+    <DriverStatusPage 
+      drivers={drivers}/>
   {/if}
 </main>
