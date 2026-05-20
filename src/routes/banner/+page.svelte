@@ -51,7 +51,7 @@
 </script>
 
 <main class="container">
-  <p>{msg}</p>
+  <!-- <p>{msg}</p> -->
   <div class="slider-grid">
     <div class="slider-card">
     <header>

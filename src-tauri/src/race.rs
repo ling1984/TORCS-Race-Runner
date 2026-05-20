@@ -85,10 +85,10 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) -> Res
             eprintln!("No script path provided for team {}, skipping driver start.", index);
             continue;
         }
-        
+
         let stdout: ChildStdout;
         // only start the process if is_running is true, else return ok()
-        // solves bug with 
+        // solves bug where because we starting drivers sequentially, stopping the first driver without connecting would just start the next one.
         if *race_state.is_running.lock().await {
             // Without this {}, it is possible to start a process -> stop the race (kill children) -> add process to children
             // therefore leaving the process alive when it shouldn't be

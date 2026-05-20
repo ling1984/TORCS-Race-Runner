@@ -15,12 +15,13 @@
   -webkit-text-size-adjust: 100%;
   --line: background-color;
   --limit: #4a4a4a;
-  --button-background: #888;
+  --radio-button-background: #888;
   --help-border:rgb(91, 91, 91);
   --help-icon-background: #3c3c3c;
   --help-icon-colour: white;
   --slider-card-background: #f6f6f6;
   --home-box-shadow: rgba(0, 0, 0, 0.15);
+  --button-background: white;
 }
 
 .container {
@@ -92,8 +93,7 @@ header {
   width: 198px;
   height: 162px;
   border-radius: 20px;
-  background: var(--slider-card-background, #f2f2f2);
-
+  background: var(--button-background);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -131,7 +131,7 @@ header {
   width: 1rem;
   height: 1rem;
   border-radius: 50%;
-  background: var(--button-background);
+  background: var(--radio-button-background);
   border: 1px solid var(--help-border);
   display: flex;
   align-items: center;
@@ -240,7 +240,7 @@ header {
   position: relative;
   display: inline-block;
   padding: 0.5rem 1rem;
-  background: var(--button-background);
+  background: var(--radio-button-background);
   color: white;
   border: 2px solid transparent;
   border-radius: 4px;
@@ -298,7 +298,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 button {
-  background: #444;
+  background: var(--button-background, #444);
   color: white;
   border: none;
   padding: 0.4rem;
@@ -308,7 +308,7 @@ button {
 }
 
 button:hover {
-  background: #666;
+  background: var(--button-background-hover, #444);
 }
 
 .container {
@@ -378,9 +378,10 @@ button {
     background-color: #2f2f2f;
     background: #2f2f2f;
     --limit: #dedede;
-    --button-background: #444;
+    --radio-button-background: #444;
     --slider-card-background: #2b2a2a98;
     --home-box-shadow: rgba(0, 0, 0, 0.5);
+    --button-background: #444;
   }
 
   input,
