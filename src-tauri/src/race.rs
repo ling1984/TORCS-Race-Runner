@@ -1,6 +1,6 @@
 use std::process::Stdio;
 use serde::{Deserialize, Serialize};
-use tokio::process::{Child, Command};
+use tokio::process::{Child, Command, ChildStdout};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::sync::Mutex;
 use tauri::{Emitter, Manager};
@@ -24,11 +24,12 @@ struct RaceDriverStatus {
 
 pub struct RaceState {
     pub children: Mutex<Vec<Child>>,
+    pub is_running: Mutex<bool>,
 }
 
 
 #[tauri::command]
-pub async fn start_race(race_teams: Vec<RaceTeam>, app: tauri::AppHandle) -> Result<(), String> {
+pub async fn start_race(race_teams: Vec<RaceTeam>, app: tauri::AppHandle, race_state: tauri::State<'_, RaceState>) -> Result<(), String> {
     // TODO Replace this with a set path stored globally.
     let exe_dir = std::env::current_exe()
         .expect("can't get exe path")
@@ -56,6 +57,12 @@ pub async fn start_race(race_teams: Vec<RaceTeam>, app: tauri::AppHandle) -> Res
             }
         }
     }
+
+    {
+        // sets is_running to true
+        *race_state.is_running.lock().await = true;
+    }
+
     let app_clone = app.clone();
     tauri::async_runtime::spawn(async move {
         if let Err(e) = start_scripts(app_clone, race_teams).await {
@@ -79,20 +86,30 @@ async fn start_scripts (app: tauri::AppHandle, race_teams: Vec<RaceTeam>) -> Res
             continue;
         }
         
-        let mut child = Command::new("python")
-        .arg("-u") // unbuffered output
-        .arg(&team.script_path)
-        .arg("--port")
-        .arg((3001 + index).to_string()) // assign ports 3001, 3002, ... to drivers
-        .stdout(Stdio::piped())
-        .spawn()
-        .map_err(|e| format!("Failed to start driver script for team {index}: {e}"))?;
-        
-        let stdout = child.stdout.take().ok_or("Failed to get stdout")?;
-
-        {
-            let mut race_children = race_state.children.lock().await;
-            race_children.push(child);
+        let stdout: ChildStdout;
+        // only start the process if is_running is true, else return ok()
+        // solves bug with 
+        if *race_state.is_running.lock().await {
+            // Without this {}, it is possible to start a process -> stop the race (kill children) -> add process to children
+            // therefore leaving the process alive when it shouldn't be
+            
+            {
+                let mut race_children = race_state.children.lock().await;
+                let mut child = Command::new("python")
+                .arg("-u") // unbuffered output
+                .arg(&team.script_path)
+                .arg("--port")
+                .arg((3001 + index).to_string()) // assign ports 3001, 3002, ... to drivers
+                .stdout(Stdio::piped())
+                .spawn()
+                .map_err(|e| format!("Failed to start driver script for team {index}: {e}"))?;
+            
+                stdout = child.stdout.take().ok_or("Failed to get stdout")?;
+                
+                race_children.push(child);
+            } 
+        } else {
+            return Ok(());
         }
 
         let mut reader = BufReader::new(stdout).lines();
@@ -153,6 +170,7 @@ fn extract_port(line: &str) -> String {
 #[tauri::command]
 pub async fn stop_race(race_state: tauri::State<'_, RaceState>) -> Result<(), String> {
     println!("Stopping race");
+    *race_state.is_running.lock().await = false;
     let mut children = race_state.children.lock().await;
     for child in children.iter_mut() {
         child.kill().await.map_err(|e| e.to_string())?;
