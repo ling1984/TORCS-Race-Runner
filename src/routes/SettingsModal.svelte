@@ -5,9 +5,11 @@
     import { onMount } from 'svelte';
 
   let folder_path = $state("");
+  let python_alias = $state("");
 
   onMount(async () => {
     folder_path = await store.get('folder_path') ?? "";
+    python_alias = await store.get('python_alias') ?? "";
   });
 
   let {closeSettings, settingsOpen} = $props();
@@ -33,6 +35,10 @@
   async function saveFolderPath() {
     await store.set('folder_path', folder_path);
   }
+
+  async function savePythonAlias() {
+    await store.set('python_alias', python_alias);
+  }
 </script>
 
 <div>
@@ -40,20 +46,26 @@
   <div class="overlay">
     <div class="modal">
       <div class="header modal-header">
-        <h2>Settings</h2>
-        <button class="btn" style="box-shadow: 0 4px 6px var(--home-box-shadow);" type="button" onclick={closeSettings} disabled={folder_path===''}>
+        <h1>Settings</h1>
+        <button class="btn" style="box-shadow: 0 4px 6px var(--home-box-shadow); margin-left: auto;" type="button" onclick={closeSettings} disabled={folder_path===''}>
           <X size={24} />
         </button>
       </div>
       <div class="modal-content">
-        <header>
-          <div class="label-container">
-            <span class="label">Path to IBM Race League folder</span>
-            <span class="help-icon" data-tooltip="Enter the path or find where the IBM Race League folder is on your device.">?</span>
-          </div>
-        </header>
-        <input id="target-input" autocomplete="off" placeholder="Enter or find path..." bind:value={folder_path} oninput={saveFolderPath}/>
-        <button onclick={pick_folder}>Find file</button>
+        <div class="label-container" style="margin-bottom: 10px;">
+          <span class="label">Path to IBM Race League folder</span>
+          <span class="help-icon" data-tooltip="Find where the IBM Race League folder is on your device.">?</span>
+        </div>
+        <div class="input-group">
+          <input id="folder-input" autocomplete="off" placeholder="Enter or find path..." bind:value={folder_path} oninput={saveFolderPath}/>
+          <button onclick={pick_folder}>Find folder</button>
+        </div>
+        <p></p>
+        <div class="label-container" style="margin-bottom: 10px;">
+          <span class="label">Python alias</span>
+          <span class="help-icon" data-tooltip="Enter the alias for your Python installation. Needs to be in PATH.">?</span>
+        </div>
+        <input id="python-input" autocomplete="off" placeholder="python" bind:value={python_alias} oninput={savePythonAlias}/>
         <p></p>
       </div>
     </div>
@@ -78,21 +90,21 @@
   .modal {
     background-color: var(--settings-modal-background, #f2f2f2);
     border-radius: 8px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     width: 90%;
     max-width: 500px;
     max-height: 80vh;
     overflow-y: auto;
-    position: relative;
+    justify-content: center;
   }
 
+
   .modal-header {
-    align-self: center;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-left: 20px;
-    /* border-bottom: 1px solid var(--color-border, #e0e0e0); */
+    margin: 0;
+    padding: 20px;
+    font-size: 1.5em;
+    border-bottom: 1px solid #a3a3a3bb;
+    margin-bottom: 20px;
   }
 
   .modal-content {
