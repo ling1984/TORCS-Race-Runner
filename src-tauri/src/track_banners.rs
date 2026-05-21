@@ -1,17 +1,24 @@
 use image::imageops::FilterType;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use tauri_plugin_store::StoreExt;
 
 /// Changes the banners on the Corkscrew track.
 /// If banner_path is empty, it resets the banners to their original state.
 #[tauri::command]
-pub fn change_banners(banner_path: &str) {
+pub fn change_banners(banner_path: &str, app: tauri::AppHandle) {
+    // exe path from the store
+    let store = app
+        .store("settings.json")
+        .map_err(|e| format!("Failed to access store: {e}")).unwrap();
+
+    let exe_dir: PathBuf = store
+        .get("folder_path")
+        .and_then(|v| v.as_str().map(|s| s.to_string()))
+        .ok_or_else(|| "folder_path missing or not a string".to_string())
+        .map(PathBuf::from).unwrap();
+    
     // get the corkscrew path
-    let exe_dir = std::env::current_exe()
-        .expect("can't get exe path")
-        .parent()
-        .expect("exe has no parent")
-        .to_path_buf();
     let corkscrew_path = exe_dir
         .join("torcs")
         .join("tracks")
