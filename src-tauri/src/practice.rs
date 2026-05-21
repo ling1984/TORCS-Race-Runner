@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
 use std::{
-    process::{Child, Command},
-    sync::Mutex,
+    path::PathBuf, process::{Child, Command}, sync::Mutex
 };
 use tauri::State;
+use tauri_plugin_store::StoreExt;
+
 
 use crate::{
     car_logo::{overlay_car_logo, reset_car_logo},
@@ -39,7 +40,7 @@ pub fn handle_params(
 }
 
 #[tauri::command]
-pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {
+pub fn start_practice(state: State<PracticeDriverState>, app: tauri::AppHandle) -> Result<(), String> {
     // Get the current driver process if it exists
     let mut driver_guard = state.driver.lock().unwrap();
     if driver_guard.is_some() {
@@ -50,12 +51,16 @@ pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {
     let params_guard = state.params.lock().unwrap();
     let params = params_guard.as_ref().ok_or("No parameters set")?;
 
-    let exe_dir = std::env::current_exe()
-        .expect("can't get exe path")
-        .parent()
-        .expect("exe has no parent")
-        .to_path_buf();
+    let store = app
+        .store("settings.json")
+        .map_err(|e| format!("Failed to access store: {e}"))?;
 
+    let exe_dir: PathBuf = store
+        .get("folder_path")
+        .and_then(|v| v.as_str().map(|s| s.to_string()))
+        .ok_or_else(|| "folder_path missing or not a string".to_string())
+        .map(PathBuf::from)?;
+    
     // -- Change team name and logo before starting the driver --
     update_team_name(0, &params.team_name, &exe_dir).map_err(|e| e.to_string())?;
 
@@ -85,7 +90,20 @@ pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {
     // final racerunner.exe needs to be same dir as gym_torcs
     println!("Running driver script at: {:?}", driver_script_path);
 
-    let child = Command::new("python")
+    // get python alias
+    let store = app
+        .store("settings.json")
+        .map_err(|e| format!("Failed to access store: {e}"))?;
+
+    let mut python_alias = store
+        .get("python_alias")
+        .and_then(|v| v.as_str().map(|s| s.to_string()))
+        .unwrap_or_else(|| "python".to_string());
+    if python_alias == "" {
+        python_alias = "python".to_string();
+    }
+
+    let child = Command::new(&python_alias)
         .arg(&driver_script_path)
         .arg("--parameters")
         .arg(&params_json)
