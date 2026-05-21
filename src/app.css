@@ -20,6 +20,7 @@
   --help-icon-background: #3c3c3c;
   --help-icon-colour: white;
   --slider-card-background: #f6f6f6;
+  --settings-modal-background: #f2f2f2;
   --home-box-shadow: rgba(0, 0, 0, 0.15);
   --button-background: white;
 }
@@ -379,7 +380,8 @@ button {
     background: #2f2f2f;
     --limit: #dedede;
     --radio-button-background: #444;
-    --slider-card-background: #2b2a2a98;
+    --slider-card-background: #2b2a2a98; /* #2b2a2a98 */
+    --settings-modal-background: #2b2a2a;
     --home-box-shadow: rgba(0, 0, 0, 0.5);
     --button-background: #444;
   }

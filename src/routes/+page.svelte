@@ -2,7 +2,9 @@
   import { goto } from '$app/navigation';
   import { Timer, Flag, Palette, Settings } from '@lucide/svelte';
   import SettingsModal from './SettingsModal.svelte';
-  import { load } from '@tauri-apps/plugin-store';
+  import { store } from '../lib/plugin-store';
+  import { onMount } from 'svelte';
+
 
   function startPractice() {
     console.log("Start Practice clicked");
@@ -20,6 +22,16 @@
   }
 
   let settingsOpen = $state(false);
+
+  onMount(async () => {
+    // read existing value
+    let folder_path = (await store.get('folder_path')) ?? '';
+
+    console.log(folder_path);
+    if (folder_path === '') {
+      settingsOpen = true;
+    }
+  });
 </script>
 
 <header class="header" style="height: 72px;">

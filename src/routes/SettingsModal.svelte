@@ -1,25 +1,38 @@
 <script lang="ts">
-    import {X} from '@lucide/svelte'
-    import { open } from "@tauri-apps/plugin-dialog";
-    let folder_path = $state("")
-    async function pick_folder() {
-        try {
-            const selected = await open({
-                directory: true,
-                multiple: false,
-                title: 'Select IBM Race League Folder'
-            });
+  import {X} from '@lucide/svelte'
+  import { open } from "@tauri-apps/plugin-dialog";
+  import { store } from '../lib/plugin-store';
+    import { onMount } from 'svelte';
 
-            if (selected) {
-                folder_path = selected;
-                console.log(folder_path);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-        }
+  let folder_path = $state("");
 
-    let {closeSettings, settingsOpen} = $props();
+  onMount(async () => {
+    folder_path = await store.get('folder_path') ?? "";
+  });
+
+  let {closeSettings, settingsOpen} = $props();
+
+  async function pick_folder() {
+    try {
+      const selected = await open({
+      directory: true,
+      multiple: false,
+      title: 'Select IBM Race League Folder'
+    });
+
+    if (selected) {
+      folder_path = selected;
+      await saveFolderPath();
+      console.log(folder_path);
+    }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function saveFolderPath() {
+    await store.set('folder_path', folder_path);
+  }
 </script>
 
 <div>
@@ -28,7 +41,7 @@
     <div class="modal">
       <div class="header modal-header">
         <h2>Settings</h2>
-        <button class="btn" style="box-shadow: 0 4px 6px var(--home-box-shadow);" type="button" onclick={closeSettings}>
+        <button class="btn" style="box-shadow: 0 4px 6px var(--home-box-shadow);" type="button" onclick={closeSettings} disabled={folder_path===''}>
           <X size={24} />
         </button>
       </div>
@@ -39,7 +52,7 @@
             <span class="help-icon" data-tooltip="Enter the path or find where the IBM Race League folder is on your device.">?</span>
           </div>
         </header>
-        <input id="target-input" autocomplete="off" placeholder="Enter or find path..." bind:value={folder_path}/>
+        <input id="target-input" autocomplete="off" placeholder="Enter or find path..." bind:value={folder_path} oninput={saveFolderPath}/>
         <button onclick={pick_folder}>Find file</button>
         <p></p>
       </div>
@@ -63,7 +76,7 @@
   }
 
   .modal {
-    background-color: #f2f2f2;
+    background-color: var(--settings-modal-background, #f2f2f2);
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     width: 90%;
