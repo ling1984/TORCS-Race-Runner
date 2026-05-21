@@ -1,8 +1,14 @@
-use std::{process::{Child, Command}, sync::Mutex};
-use tauri::{State};
 use serde::{Deserialize, Serialize};
+use std::{
+    process::{Child, Command},
+    sync::Mutex,
+};
+use tauri::State;
 
-use crate::{car_logo::{reset_car_logo, overlay_car_logo}, team_name::update_team_name};
+use crate::{
+    car_logo::{overlay_car_logo, reset_car_logo},
+    team_name::update_team_name,
+};
 
 // pub because we initialise it in lib.rs
 pub struct PracticeDriverState {
@@ -23,14 +29,17 @@ pub struct PracticeDriverParams {
 }
 
 #[tauri::command]
-pub fn handle_params(params: PracticeDriverParams, state: State<PracticeDriverState>) -> Result<(), String> {
+pub fn handle_params(
+    params: PracticeDriverParams,
+    state: State<PracticeDriverState>,
+) -> Result<(), String> {
     let mut guard = state.params.lock().unwrap();
     *guard = Some(params);
     Ok(())
 }
 
 #[tauri::command]
-pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {    
+pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {
     // Get the current driver process if it exists
     let mut driver_guard = state.driver.lock().unwrap();
     if driver_guard.is_some() {
@@ -40,7 +49,7 @@ pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {
     // Get the stored parameters
     let params_guard = state.params.lock().unwrap();
     let params = params_guard.as_ref().ok_or("No parameters set")?;
-    
+
     let exe_dir = std::env::current_exe()
         .expect("can't get exe path")
         .parent()
@@ -48,19 +57,19 @@ pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {
         .to_path_buf();
 
     // -- Change team name and logo before starting the driver --
-    update_team_name(0, &params.team_name, &exe_dir)
-        .map_err(|e| e.to_string())?;
+    update_team_name(0, &params.team_name, &exe_dir).map_err(|e| e.to_string())?;
 
     // Get the stored logo path and change car logo if it exists
     let logo_path_guard = state.logo_path.lock().unwrap();
 
     // If there is some logo path (we set None if ""), we change the logo
-    if let Some(ref logo_path) = *logo_path_guard{
+    if let Some(ref logo_path) = *logo_path_guard {
         match overlay_car_logo(0, logo_path, &exe_dir) {
             Ok(()) => println!("Car logo overlayed successfully."),
             Err(e) => eprintln!("Car logo overlay error: {e}"),
         }
-    } else { // else reset
+    } else {
+        // else reset
         match reset_car_logo(0, &exe_dir) {
             Ok(()) => println!("Car logo reset successfully."),
             Err(e) => eprintln!("Car logo reset error: {e}"),
@@ -70,13 +79,12 @@ pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {
     // -- Start the driver script with parameters --
 
     // Serialize parameters to JSON
-    let params_json = serde_json::to_string(params)
-        .map_err(|e| e.to_string())?;
+    let params_json = serde_json::to_string(params).map_err(|e| e.to_string())?;
 
     let driver_script_path = exe_dir.join("gym_torcs").join("torcs_jm_par.py");
     // final racerunner.exe needs to be same dir as gym_torcs
     println!("Running driver script at: {:?}", driver_script_path);
-    
+
     let child = Command::new("python")
         .arg(&driver_script_path)
         .arg("--parameters")
@@ -93,14 +101,10 @@ pub fn start_practice(state: State<PracticeDriverState>) -> Result<(), String> {
 pub fn set_logo_path(path: String, state: State<PracticeDriverState>) -> Result<(), String> {
     let mut guard = state.logo_path.lock().unwrap();
     println!("path is {}", path);
-    
+
     // we set it to none if it is empty
     // so that we can reset if empty
-    *guard = if path.is_empty() {
-        None
-    } else {
-        Some(path)
-    };
+    *guard = if path.is_empty() { None } else { Some(path) };
     Ok(())
 }
 

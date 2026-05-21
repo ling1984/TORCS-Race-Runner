@@ -1,51 +1,51 @@
 <script lang="ts">
-    import { convertFileSrc } from "@tauri-apps/api/core";
-    import { open } from "@tauri-apps/plugin-dialog";
-    import { race_teams, curr_team_index } from '$lib/stores';
+  import { convertFileSrc } from "@tauri-apps/api/core";
+  import { open } from "@tauri-apps/plugin-dialog";
+  import { race_teams, curr_team_index } from '$lib/stores';
 
-    async function pick_logo_file() {
-        try {
-        const selected = await open({
-            multiple: false,
-            filters: [{
-            name: 'Image',
-            extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp']
-            }]
-        });
+  async function pick_logo_file() {
+      try {
+      const selected = await open({
+          multiple: false,
+          filters: [{
+          name: 'Image',
+          extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp']
+          }]
+      });
 
-        if (selected) {
-            current_team.update((team) => ({ ...team, logo_path: selected }));
-        }
-        } catch (error) {
-        msg = `Error selecting logo: ${error}`;
-        }
-    }
+      if (selected) {
+          current_team.update((team) => ({ ...team, logo_path: selected }));
+      }
+      } catch (error) {
+      msg = `Error selecting logo: ${error}`;
+      }
+  }
 
-    async function pick_script_file() {
-        try {
-        const selected = await open({
-            multiple: false,
-            filters: [{
-            name: 'Python Script',
-            extensions: ['py']
-            }]
-        });
+  async function pick_script_file() {
+      try {
+      const selected = await open({
+          multiple: false,
+          filters: [{
+          name: 'Python Script',
+          extensions: ['py']
+          }]
+      });
 
-        if (selected) {
-            current_team.update((team) => ({ ...team, script_path: selected }));
-        }
-        } catch (error) {
-        msg = `Error selecting driver script: ${error}`;
-        }
-    }
-    
-    // function resetCurrentTeam() {
-    //     current_team.update((team) => ({ ...team, name: "", logo_path: "", script_path: "" }));
-    // }
+      if (selected) {
+          current_team.update((team) => ({ ...team, script_path: selected }));
+      }
+      } catch (error) {
+      msg = `Error selecting driver script: ${error}`;
+      }
+  }
   
-    let tab_team_names = ["Team 0", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"];
-	let { msg } = $props();
-    let current_team = $derived(race_teams[$curr_team_index]);
+  // function resetCurrentTeam() {
+  //     current_team.update((team) => ({ ...team, name: "", logo_path: "", script_path: "" }));
+  // }
+
+  let tab_team_names = ["Team 0", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"];
+  let { msg } = $props();
+  let current_team = $derived(race_teams[$curr_team_index]);
 
 </script>
 

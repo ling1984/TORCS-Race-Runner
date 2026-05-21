@@ -1,6 +1,6 @@
-use image::{imageops::FilterType};
+use image::imageops::FilterType;
 use std::fs;
-use std::path::{Path};
+use std::path::Path;
 
 /// Changes the banners on the Corkscrew track.
 /// If banner_path is empty, it resets the banners to their original state.
@@ -12,11 +12,17 @@ pub fn change_banners(banner_path: &str) {
         .parent()
         .expect("exe has no parent")
         .to_path_buf();
-    let corkscrew_path = exe_dir.join("torcs").join("tracks").join("road").join("corkscrew");
-    
+    let corkscrew_path = exe_dir
+        .join("torcs")
+        .join("tracks")
+        .join("road")
+        .join("corkscrew");
+
     // if empty string, reset all the banners
     if banner_path.is_empty() {
-        let files = ["kilo", "TRUCK07", "64PASS1", "64PASS6", "treeRNS2", "64PASS9"];
+        let files = [
+            "kilo", "TRUCK07", "64PASS1", "64PASS6", "treeRNS2", "64PASS9",
+        ];
         for file in files {
             let copy_path = corkscrew_path.join(format!("{}_copy.png", file));
             let original_path = corkscrew_path.join(format!("{}.png", file));
@@ -50,18 +56,20 @@ pub fn change_banners(banner_path: &str) {
             };
 
             let mut banner_img = match image::open(banner_img_path) {
-                    Ok(img) => img.to_rgba8(),
-                    Err(_) => continue,
-                };
+                Ok(img) => img.to_rgba8(),
+                Err(_) => continue,
+            };
             for &pos in coords_list {
                 if loop_count == 0 {
                     banner_img = image::imageops::flip_horizontal(&banner_img);
-                    banner_img = image::imageops::resize(&banner_img, res.0, res.1, FilterType::Nearest);
+                    banner_img =
+                        image::imageops::resize(&banner_img, res.0, res.1, FilterType::Nearest);
                     image::imageops::overlay(&mut base, &banner_img, pos.0 as i64, pos.1 as i64);
                 } else {
                     // Rotate 270 and resize
                     let rotated = image::imageops::rotate270(&banner_img);
-                    let resized = image::imageops::resize(&rotated, res.0, res.1, FilterType::Nearest);
+                    let resized =
+                        image::imageops::resize(&rotated, res.0, res.1, FilterType::Nearest);
                     image::imageops::overlay(&mut base, &resized, pos.0 as i64, pos.1 as i64);
                 }
             }
@@ -72,13 +80,37 @@ pub fn change_banners(banner_path: &str) {
             }
 
             let _ = base.save(base_path);
-            loop_count+=1;
+            loop_count += 1;
         }
 
         // Handle other files
-        let files = ["kilo.png", "TRUCK07.png", "64PASS1.png", "64PASS1.png", "64PASS1.png", "64PASS6.png", "64PASS9.png"];
-        let target_res = [(512, 256), (128, 64), (512, 123), (492, 71), (211, 124), (512, 158), (211, 119)];
-        let start_coords = [(0, 0), (0, 64), (0, 228), (10, 133), (216, 376), (0, 0), (0, 198)];
+        let files = [
+            "kilo.png",
+            "TRUCK07.png",
+            "64PASS1.png",
+            "64PASS1.png",
+            "64PASS1.png",
+            "64PASS6.png",
+            "64PASS9.png",
+        ];
+        let target_res = [
+            (512, 256),
+            (128, 64),
+            (512, 123),
+            (492, 71),
+            (211, 124),
+            (512, 158),
+            (211, 119),
+        ];
+        let start_coords = [
+            (0, 0),
+            (0, 64),
+            (0, 228),
+            (10, 133),
+            (216, 376),
+            (0, 0),
+            (0, 198),
+        ];
 
         for i in 0..files.len() {
             let base_path = corkscrew_path.join(files[i]);
@@ -88,13 +120,23 @@ pub fn change_banners(banner_path: &str) {
             };
 
             if let Ok(banner) = image::open(banner_img_path) {
-                let mut resized = image::imageops::resize(&banner.to_rgba8(), target_res[i].0, target_res[i].1, FilterType::Nearest);
+                let mut resized = image::imageops::resize(
+                    &banner.to_rgba8(),
+                    target_res[i].0,
+                    target_res[i].1,
+                    FilterType::Nearest,
+                );
 
                 // special case with TRUCK07
-                if files[i]=="TRUCK07.png" {
-                    resized=image::imageops::flip_horizontal(&resized);
+                if files[i] == "TRUCK07.png" {
+                    resized = image::imageops::flip_horizontal(&resized);
                 }
-                image::imageops::overlay(&mut base, &resized, start_coords[i].0 as i64, start_coords[i].1 as i64);
+                image::imageops::overlay(
+                    &mut base,
+                    &resized,
+                    start_coords[i].0 as i64,
+                    start_coords[i].1 as i64,
+                );
                 let _ = base.save(base_path);
             }
         }
