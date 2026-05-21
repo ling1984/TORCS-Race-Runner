@@ -6,6 +6,7 @@
 
   let folder_path = $state("");
   let python_alias = $state("");
+  let show_warning = $state(false);
 
   onMount(async () => {
     folder_path = await store.get('folder_path') ?? "";
@@ -39,6 +40,15 @@
   async function savePythonAlias() {
     await store.set('python_alias', python_alias);
   }
+
+  function handleClose() {
+    if (folder_path === '') {
+      show_warning = true;
+    } else {
+      show_warning = false;
+      closeSettings();
+    }
+  }
 </script>
 
 <div>
@@ -47,7 +57,7 @@
     <div class="modal">
       <div class="header modal-header">
         <h1>Settings</h1>
-        <button class="btn" style="box-shadow: 0 4px 6px var(--home-box-shadow); margin-left: auto;" type="button" onclick={closeSettings} disabled={folder_path===''}>
+        <button class="btn" style="box-shadow: 0 4px 6px var(--home-box-shadow); margin-left: auto;" type="button" onclick={handleClose}>
           <X size={24} />
         </button>
       </div>
@@ -60,7 +70,9 @@
           <input id="folder-input" autocomplete="off" placeholder="Enter or find path..." bind:value={folder_path} oninput={saveFolderPath}/>
           <button onclick={pick_folder}>Find folder</button>
         </div>
-        <p></p>
+        {#if folder_path === '' && show_warning}
+        <p style="color: red;"> Please select a folder. </p>
+        {/if}
         <div class="label-container" style="margin-bottom: 10px;">
           <span class="label">Python alias</span>
           <span class="help-icon" data-tooltip="Enter the alias for your Python installation. Needs to be in PATH.">?</span>
