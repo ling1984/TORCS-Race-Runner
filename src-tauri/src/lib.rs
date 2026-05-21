@@ -17,6 +17,10 @@ mod track_banners;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::new().build())
+        // .setup(|app| {
+        //     let store = app.store("settings.json")?;
+        //     Ok(())
+        // })
         .manage(PracticeDriverState {
             driver: Mutex::new(None),
             params: Mutex::new(None),

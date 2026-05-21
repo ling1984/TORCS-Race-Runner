@@ -11,6 +11,7 @@
   onMount(async () => {
     folder_path = await store.get('folder_path') ?? "";
     python_alias = await store.get('python_alias') ?? "";
+    await store.set('python_alias', python_alias);
   });
 
   let {closeSettings, settingsOpen} = $props();

@@ -5,7 +5,6 @@
   import { store } from '../lib/plugin-store';
   import { onMount } from 'svelte';
 
-
   function startPractice() {
     console.log("Start Practice clicked");
     goto('/practice');

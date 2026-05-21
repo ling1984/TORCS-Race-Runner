@@ -3,11 +3,12 @@ use crate::{
     team_name::update_team_name,
 };
 use serde::{Deserialize, Serialize};
-use std::process::Stdio;
+use std::{path::PathBuf, process::Stdio};
 use tauri::{Emitter, Manager};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::{Child, ChildStdout, Command};
 use tokio::sync::Mutex;
+use tauri_plugin_store::StoreExt;
 
 #[derive(Serialize, Deserialize, Clone)]
 
@@ -36,12 +37,16 @@ pub async fn start_race(
     app: tauri::AppHandle,
     race_state: tauri::State<'_, RaceState>,
 ) -> Result<(), String> {
-    // TODO Replace this with a set path stored globally.
-    let exe_dir = std::env::current_exe()
-        .expect("can't get exe path")
-        .parent()
-        .expect("exe has no parent")
-        .to_path_buf();
+
+    let store = app
+        .store("settings.json")
+        .map_err(|e| format!("Failed to access store: {e}"))?;
+
+    let exe_dir: PathBuf = store
+        .get("folder_path")
+        .and_then(|v| v.as_str().map(|s| s.to_string()))
+        .ok_or_else(|| "folder_path missing or not a string".to_string())
+        .map(PathBuf::from)?;
 
     // Handle team name and logo first
     for (index, team) in race_teams.iter().enumerate() {
@@ -80,6 +85,20 @@ async fn start_scripts(
     app: tauri::AppHandle,
     race_teams: Vec<RaceTeam>,
 ) -> Result<(), Box<dyn std::error::Error>> {
+
+    // get python alias
+    let store = app
+        .store("settings.json")
+        .map_err(|e| format!("Failed to access store: {e}"))?;
+
+    let mut python_alias = store
+        .get("python_alias")
+        .and_then(|v| v.as_str().map(|s| s.to_string()))
+        .unwrap_or_else(|| "python".to_string());
+    if python_alias == "" {
+        python_alias = "python".to_string();
+    }
+
     // Handling race state and locking children mutex to push new children to it.
     let race_state = app.state::<RaceState>();
 
@@ -102,7 +121,7 @@ async fn start_scripts(
 
             {
                 let mut race_children = race_state.children.lock().await;
-                let mut child = Command::new("python")
+                let mut child = Command::new(&python_alias)
                     .arg("-u") // unbuffered output
                     .arg(&team.script_path)
                     .arg("--port")
