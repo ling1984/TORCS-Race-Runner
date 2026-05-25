@@ -6,17 +6,17 @@ use tauri_plugin_store::StoreExt;
 /// Changes the banners on the Corkscrew track.
 /// If banner_path is empty, it resets the banners to their original state.
 #[tauri::command]
-pub fn change_banners(banner_path: &str, app: tauri::AppHandle) {
+pub fn change_banners(banner_path: &str, app: tauri::AppHandle) -> Result<(), String>{
     // exe path from the store
     let store = app
         .store("settings.json")
-        .map_err(|e| format!("Failed to access store: {e}")).unwrap();
+        .map_err(|e| format!("Failed to access store: {e}"))?;
 
     let exe_dir: PathBuf = store
         .get("folder_path")
         .and_then(|v| v.as_str().map(|s| s.to_string()))
         .ok_or_else(|| "folder_path missing or not a string".to_string())
-        .map(PathBuf::from).unwrap();
+        .map(PathBuf::from)?;
     
     // get the corkscrew path
     let corkscrew_path = exe_dir
@@ -40,7 +40,7 @@ pub fn change_banners(banner_path: &str, app: tauri::AppHandle) {
     } else {
         let banner_img_path = Path::new(banner_path);
         if !banner_img_path.exists() {
-            return;
+            return Err("Banner image path does not exist".into());
         }
 
         // Handle truck (treeRNS2.png)
@@ -59,12 +59,12 @@ pub fn change_banners(banner_path: &str, app: tauri::AppHandle) {
 
             let mut base = match image::open(&base_path) {
                 Ok(img) => img.to_rgba8(),
-                Err(_) => continue,
+                Err(e) => return Err(format!("Failed to open base image: {e}")),
             };
 
             let mut banner_img = match image::open(banner_img_path) {
                 Ok(img) => img.to_rgba8(),
-                Err(_) => continue,
+                Err(e) => return Err(format!("Failed to open banner image: {e}")),
             };
             for &pos in coords_list {
                 if loop_count == 0 {
@@ -123,7 +123,7 @@ pub fn change_banners(banner_path: &str, app: tauri::AppHandle) {
             let base_path = corkscrew_path.join(files[i]);
             let mut base = match image::open(&base_path) {
                 Ok(img) => img.to_rgba8(),
-                Err(_) => continue,
+                Err(e) => return Err(format!("Failed to open base image: {e}")),
             };
 
             if let Ok(banner) = image::open(banner_img_path) {
@@ -148,4 +148,6 @@ pub fn change_banners(banner_path: &str, app: tauri::AppHandle) {
             }
         }
     }
+
+    Ok(())
 }
