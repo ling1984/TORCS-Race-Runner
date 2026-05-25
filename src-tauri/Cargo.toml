@@ -27,4 +27,5 @@ image = "0.25"
 image-extras = "0.1"
 quick-xml = "0.36"
 tokio = {version="1.52.3", features = ["process"] }
+tauri-plugin-store = "2"
 
