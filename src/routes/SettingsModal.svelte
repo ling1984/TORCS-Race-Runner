@@ -74,7 +74,7 @@
         {#if folder_path === '' && show_warning}
         <p style="color: red;"> Please select a folder. </p>
         {/if}
-        <div class="label-container" style="margin-bottom: 10px;">
+        <div class="label-container" style="margin-bottom: 10px; margin-top: 20px;">
           <span class="label">Python alias</span>
           <span class="help-icon" data-tooltip="Enter the alias for your Python installation. Needs to be in PATH.">?</span>
         </div>
@@ -87,6 +87,9 @@
 </div>
 
 <style>
+  .input-group {
+    gap: 10px;
+  }
   .overlay {
     position: fixed;
     top: 0;
@@ -122,7 +125,7 @@
 
   .modal-content {
     padding-left: 20px;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
   }
 
 </style>
