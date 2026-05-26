@@ -137,9 +137,9 @@
     padding: 8px 12px;
     font-size: 2rem;
     font-weight: bold;
-    border: 2px solid transparent;
+    border: 2px solid var(--race-menu-outline);
     border-radius: 4px;
-    background: white;
+    background: var(--team-name-input-background); 
     color: inherit;
     font-family: inherit;
     cursor: pointer;
@@ -147,7 +147,7 @@
   }
 
   .team-name-input:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.2);
     border-color: rgba(100, 150, 255, 0.3);
   }
 
@@ -159,7 +159,7 @@
   }
 
   .team-name-input::placeholder {
-    color: rgba(27, 27, 27, 0.55);
+    color: var(--placeholder-color);
   }
 
   .tabs {
