@@ -18,7 +18,7 @@
     if (driver) {
       driver.team_name = payload.team_name;
       driver.state = payload.state;
-      driver.port = payload.port;
+      driver.port = payload.port.replace(/\.+$/, ""); // Remove trailing '....'
       drivers = drivers;
     }
   });
