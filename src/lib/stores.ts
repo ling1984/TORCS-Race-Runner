@@ -2,7 +2,7 @@ import { writable } from 'svelte/store';
 import type { RaceTeam } from './types';
 
 // practice
-export const running = writable(false);
+export const practice_running = writable(false);
 export const team_logo_path = writable("");
 export const team_name = writable("");
 

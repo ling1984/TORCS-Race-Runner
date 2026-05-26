@@ -7,10 +7,10 @@
 </script>
 
 <div class="driver-grid">
-	{#each drivers as driver, i}
+	{#each drivers as driver}
 		<div class="driver-card">
-			<div class="driver-name" title={displayName(driver, i)}>
-				{displayName(driver, i)}
+			<div class="driver-name" title={displayName(driver, driver.index)}>
+				{displayName(driver, driver.index)}
 			</div>
 
 			<div class="divider"></div>
@@ -25,7 +25,7 @@
 					connected on port {driver.port}
 
 				{:else if driver.state === 'connecting'}
-					connecting on port {driver.port}
+					connecting on port {driver.port}...
 
 				{:else}
 					waiting to connect...
@@ -47,17 +47,23 @@
 
 	.driver-card {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto minmax(220px, auto);
+		grid-template-columns: 1fr auto 1fr;
 		align-items: center;
 
-		padding: 1rem 1.25rem;
+		padding: 0.5rem 1.25rem;
 		border-radius: 12px;
-
-		background: #1b1b1b;
-		border: 1px solid #333;
-
-		font-size: 1.2rem;
+		/* background: var(--slider-card-background, #f6f6f6); */
+		border: 2px solid var(--race-menu-outline);
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+		background: var(--slider-card-background);
+		font-size: 1.3rem;
 		min-height: 72px;
+	}
+
+	/**equal padding*/
+	.driver-name,
+	.driver-status {
+		padding: 0 1rem;
 	}
 
 	.driver-name {
@@ -67,15 +73,12 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-
-		padding-right: 1rem;
 	}
 
 	.divider {
-		width: 1px;
+		width: 2px;
 		align-self: stretch;
-		background: #444;
-		margin-right: 1rem;
+		background: var(--race-menu-outline);
 	}
 
 	.driver-status {

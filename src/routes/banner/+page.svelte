@@ -21,7 +21,8 @@
       await invoke("change_banners", { bannerPath: $banner_path });
       // set the save button to green in +layout.svelte
       is_banner_saved.set(true);
-      await message("Banner images updated successfully!", { title: "Success", kind: "info" });
+      let message_body = $banner_path ? "Banner image updated successfully!" : "Banner reset successfully!";
+      await message(message_body, { title: "Success", kind: "info" });
     } 
     catch (error) {
       msg = `Error: ${error}`;
@@ -53,7 +54,7 @@
 <main class="container">
   <!-- <p>{msg}</p> -->
   <div class="slider-grid">
-    <div class="slider-card">
+    <div class="slider-card banner-slider-card">
     <header>
             <div class="label-container">
               <span class="label">Banner image</span>
@@ -72,3 +73,9 @@
     </div>
 </div>
 </main>
+
+<style>
+  .banner-slider-card {
+    outline: 2px solid var(--race-menu-outline);
+  }
+</style>

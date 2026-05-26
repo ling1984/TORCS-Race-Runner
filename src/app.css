@@ -6,7 +6,7 @@
   font-weight: 400;
 
   color: #0f0f0f;
-  background-color: #f6f6f6;
+  background-color: #eeeeee; /**/
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,6 +23,12 @@
   --settings-modal-background: #f2f2f2;
   --home-box-shadow: rgba(0, 0, 0, 0.15);
   --button-background: white;
+  --race-menu-background: #ececec;
+  --race-menu-outline: #0505051b;
+  --race-menu-box-shadow: rgba(0, 0, 0, 0.15);
+  --team-name-input-background: white;
+  --placeholder-color: rgba(27, 27, 27, 0.55);
+  --settings-warning: red;
 }
 
 .container {
@@ -49,6 +55,7 @@ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   min-height: fit-content;
   align-items: stretch;
+  font-size: 1.1rem;
 }
 
 .banner-card {
@@ -129,6 +136,7 @@ header {
   cursor: default;
   color: var(--help-colour, white);
   font-size: 0.7rem;
+  font-weight: 500;
   width: 1rem;
   height: 1rem;
   border-radius: 50%;
@@ -312,6 +320,11 @@ button:hover {
   background: var(--button-background-hover, #444);
 }
 
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .container {
   margin: 0;
   padding: 2rem;
@@ -380,10 +393,16 @@ button {
     background: #2f2f2f;
     --limit: #dedede;
     --radio-button-background: #444;
-    --slider-card-background: #2b2a2a98; /* #2b2a2a98 */
+    --slider-card-background: #242323; /* #2b2a2a98 previously now 282828*/
     --settings-modal-background: #2b2a2a;
     --home-box-shadow: rgba(0, 0, 0, 0.5);
     --button-background: #444;
+    --race-menu-background: #515050;
+    --race-menu-box-shadow: rgba(27, 27, 27, 0.151);
+    --race-menu-outline: #5959592c;
+    --team-name-input-background: rgba(15, 15, 15, 0.800);
+    --placeholder-color: rgba(255, 255, 255, 0.678);
+    --settings-warning: #ff4949;
   }
 
   input,
@@ -397,6 +416,10 @@ button {
   button:active {
     background-color: #0f0f0f69;
   }
+  .home-slider-card {
+    background: var(--slider-card-background);
+  }
+
 }
 
 /* layout here->> */

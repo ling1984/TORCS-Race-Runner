@@ -2,7 +2,7 @@
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
   import { open, message } from "@tauri-apps/plugin-dialog";
   import type { SliderConfig, DriverParams } from '$lib/types';
-  import { team_name, team_logo_path, running, injectableMethod } from '$lib/stores';
+  import { team_name, team_logo_path, practice_running, injectableMethod } from '$lib/stores';
   
 
   let msg = $state("");
@@ -64,13 +64,13 @@
 
   async function handle_start_driver_clicked(event: Event) {
     event.preventDefault();
-    if (!$running) {
+    if (!$practice_running) {
       try {
         const params = collectParams();
         await invoke("handle_params", { params });
         msg = await invoke("start_practice");
-        running.set(true);
-        showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
+        practice_running.set(true);
+        showAlert("Driver started successfully! In the TORCS window: Race -> Practice -> New Race", "Success", "info");
       } catch (error) {
         msg = `Error: ${error}`;
         showAlert(`Failed to start driver: ${error}`, "Error", "error");
@@ -80,7 +80,7 @@
       try {
         msg = await invoke("stop_practice");
         msg = "Stopped";
-        running.set(false);
+        practice_running.set(false);
       } catch (error) {
         msg = `Error: ${error}`;
         showAlert(`Failed to stop driver: ${error}`, "Error", "error");
@@ -113,7 +113,7 @@
   <div class="slider-grid">
     {#each sliders as slider, i}
       {#if slider.type=='slider'}
-        <div class="slider-card">
+        <div class="slider-card practice-slider-card">
           <header>
             <div class="label-container">
               <span class="label">{slider.label}</span>
@@ -139,7 +139,7 @@
       {/if}
 
       {#if slider.type=='multi-slider'}
-        <div class="slider-card">
+        <div class="slider-card practice-slider-card">
           <header>
             <div class="label-container">
               <span class="label">{slider.label}</span>
@@ -176,7 +176,7 @@
       {/if}
 
       {#if slider.type=='switch'}
-        <div class="slider-card">
+        <div class="slider-card practice-slider-card">
           <header>
             <div class="label-container">
               <span class="label">{slider.label}</span>
@@ -200,7 +200,7 @@
         </div>
       {/if}
     {/each}
-    <div class="slider-card">
+    <div class="slider-card practice-slider-card">
       <header>
         <div class="label-container">
           <span class="label">Team name</span>
@@ -210,7 +210,7 @@
       <input id="target-input" autocomplete="off" placeholder="Enter your team name..." bind:value={$team_name} />
       <button onclick={() => team_name.set("")}>Reset</button>
     </div>
-    <div class="slider-card">
+    <div class="slider-card practice-slider-card">
       <header>
         <div class="label-container">
           <span class="label">Team logo</span>
@@ -227,3 +227,10 @@
     </div>
   </div>
 </main>
+
+
+<style>
+  .practice-slider-card {
+    outline: 2px solid var(--race-menu-outline);
+  }
+</style>
