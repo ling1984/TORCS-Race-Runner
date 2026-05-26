@@ -175,7 +175,7 @@
     transition:
     background 0.15s,
     border-color 0.15s; */
-    box-shadow: -4px 0 8px rgba(0,0,0,0.15);
+    box-shadow: -4px 0 8px var(--race-menu-box-shadow);
     min-width: fit-content;
   }
 
@@ -185,16 +185,16 @@
 
   .tab-button:last-child {
     border-bottom-left-radius: 8px;
-    box-shadow: -4px 4px 8px rgba(0,0,0,0.15);
+    box-shadow: -4px 4px 8px var(--race-menu-box-shadow);
   }
 
   .tab-button:hover {
-    border-color: #ececec;
+    border-color: var(--race-menu-background);
   }
 
   .tab-button.selected {
-    background-color: #ececec;
-    outline: 2px solid #0505051b;
+    background-color: var(--race-menu-background);
+    outline: 2px solid var(--race-menu-outline);
     width: calc(100% - 2px);
 
     margin-right: -1px;
@@ -206,20 +206,20 @@
   .tab-button.selected::after { box-shadow:none;content: "";
    position: absolute; top: -1px; right: -5px;
     width: 6px; height: calc(100% + 2px);
-     background: #ececec; }
+     background: var(--race-menu-background); }
 
   .content {
     display: flex;
     flex-direction: column;
     flex: 1;
-    outline: 2px solid #0505051b;
-    background-color: #ececec;
+    outline: 2px solid var(--race-menu-outline);
+    background-color: var(--race-menu-background);
     padding: 24px;
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
-    box-shadow: 4px 0 8px rgba(0,0,0,0.15),
-                0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 4px 0 8px var(--race-menu-box-shadow),
+                0 4px 8px var(--race-menu-box-shadow);
   }
 
   .script-name {

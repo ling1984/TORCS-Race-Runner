@@ -23,6 +23,9 @@
   --settings-modal-background: #f2f2f2;
   --home-box-shadow: rgba(0, 0, 0, 0.15);
   --button-background: white;
+  --race-menu-background: #ececec;
+  --race-menu-outline: #0505051b;
+  --race-menu-box-shadow: rgba(0, 0, 0, 0.15);
 }
 
 .container {

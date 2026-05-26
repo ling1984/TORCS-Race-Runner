@@ -113,7 +113,7 @@
   <div class="slider-grid">
     {#each sliders as slider, i}
       {#if slider.type=='slider'}
-        <div class="slider-card">
+        <div class="slider-card practice-slider-card">
           <header>
             <div class="label-container">
               <span class="label">{slider.label}</span>
@@ -139,7 +139,7 @@
       {/if}
 
       {#if slider.type=='multi-slider'}
-        <div class="slider-card">
+        <div class="slider-card practice-slider-card">
           <header>
             <div class="label-container">
               <span class="label">{slider.label}</span>
@@ -176,7 +176,7 @@
       {/if}
 
       {#if slider.type=='switch'}
-        <div class="slider-card">
+        <div class="slider-card practice-slider-card">
           <header>
             <div class="label-container">
               <span class="label">{slider.label}</span>
@@ -200,7 +200,7 @@
         </div>
       {/if}
     {/each}
-    <div class="slider-card">
+    <div class="slider-card practice-slider-card">
       <header>
         <div class="label-container">
           <span class="label">Team name</span>
@@ -210,7 +210,7 @@
       <input id="target-input" autocomplete="off" placeholder="Enter your team name..." bind:value={$team_name} />
       <button onclick={() => team_name.set("")}>Reset</button>
     </div>
-    <div class="slider-card">
+    <div class="slider-card practice-slider-card">
       <header>
         <div class="label-container">
           <span class="label">Team logo</span>
@@ -227,3 +227,10 @@
     </div>
   </div>
 </main>
+
+
+<style>
+  .practice-slider-card {
+    outline: 2px solid var(--race-menu-outline);
+  }
+</style>
