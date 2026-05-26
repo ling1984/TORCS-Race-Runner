@@ -15,8 +15,8 @@
 </script>
 
 <header class="header" style="height: 72px;">
-    <button class="btn" type="button" onclick={handleBackClick}>
-      <ArrowLeft size={24}/>
+    <button class="btn" type="button" onclick={handleBackClick} disabled={$race_running}>
+       <ArrowLeft size={24}/>
     </button>
   <h1>Race</h1>
     <button class="btn-drive {$race_running ? 'running' : 'stopped'}" type="button" onclick={handleButtonClick}>

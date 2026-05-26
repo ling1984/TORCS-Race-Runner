@@ -2,7 +2,7 @@
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
   import { open, message } from "@tauri-apps/plugin-dialog";
   import type { SliderConfig, DriverParams } from '$lib/types';
-  import { team_name, team_logo_path, running, injectableMethod } from '$lib/stores';
+  import { team_name, team_logo_path, practice_running, injectableMethod } from '$lib/stores';
   
 
   let msg = $state("");
@@ -64,12 +64,12 @@
 
   async function handle_start_driver_clicked(event: Event) {
     event.preventDefault();
-    if (!$running) {
+    if (!$practice_running) {
       try {
         const params = collectParams();
         await invoke("handle_params", { params });
         msg = await invoke("start_practice");
-        running.set(true);
+        practice_running.set(true);
         showAlert("Driver started successfully! Now in the TORCS window navigate: Race -> Practice -> New Race, ", "Success", "info");
       } catch (error) {
         msg = `Error: ${error}`;
@@ -80,7 +80,7 @@
       try {
         msg = await invoke("stop_practice");
         msg = "Stopped";
-        running.set(false);
+        practice_running.set(false);
       } catch (error) {
         msg = `Error: ${error}`;
         showAlert(`Failed to stop driver: ${error}`, "Error", "error");
