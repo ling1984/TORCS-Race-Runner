@@ -36,7 +36,7 @@
 <header class="header" style="height: 72px;">
   <h1>TORCS Race Runner</h1>
 
-  <button class="btn" type="button" style="margin-left: auto;" onclick={() => settingsOpen = true}>
+  <button class="btn btn-with-outline" type="button" style="margin-left: auto;" onclick={() => settingsOpen = true}>
     <Settings size={24} />
   </button>
 </header>

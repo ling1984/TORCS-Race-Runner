@@ -54,7 +54,7 @@
 <main class="container">
   <!-- <p>{msg}</p> -->
   <div class="slider-grid">
-    <div class="slider-card">
+    <div class="slider-card banner-slider-card">
     <header>
             <div class="label-container">
               <span class="label">Banner image</span>
@@ -73,3 +73,9 @@
     </div>
 </div>
 </main>
+
+<style>
+  .banner-slider-card {
+    outline: 2px solid var(--race-menu-outline);
+  }
+</style>

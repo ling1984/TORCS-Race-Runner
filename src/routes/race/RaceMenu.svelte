@@ -77,7 +77,7 @@
     <!-- Slider Grid -->
     <div class="slider-grid">
       <!-- // DRIVER SCRIPT -->
-      <div class="slider-card" style="box-shadow: ;">
+      <div class="slider-card race-slider-card" style="box-shadow: ;">
         <header>
           <div class="label-container">
             <span class="label">Driver script</span>
@@ -94,7 +94,7 @@
         <button onclick={() => current_team.update((team) => ({ ...team, script_path: "" }))}>Reset</button>
       </div>
       <!-- // TEAM LOGO -->
-      <div class="slider-card">
+      <div class="slider-card race-slider-card">
         <header>
           <div class="label-container">
             <span class="label">Team logo</span>
@@ -122,6 +122,10 @@
     align-items: flex-start;
     gap: 0;
 
+  }
+
+  .race-slider-card {
+    outline: 1px solid var(--race-menu-outline);
   }
   
   .content-header {
