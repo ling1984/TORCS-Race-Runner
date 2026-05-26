@@ -58,7 +58,7 @@
     <div class="modal">
       <div class="header modal-header">
         <h1>Settings</h1>
-        <button class="btn btn-with-outline" style="box-shadow: 0 4px 6px var(--home-box-shadow); margin-left: auto;" type="button" onclick={handleClose}>
+        <button class="close-btn" style="{folder_path==='' ? 'opacity: 0.4; cursor: not-allowed;' : ''}" type="button" onclick={handleClose}>
           <X size={24} />
         </button>
       </div>
@@ -87,6 +87,12 @@
 </div>
 
 <style>
+
+  .close-btn{
+    box-shadow: 0 4px 6px var(--home-box-shadow);
+    margin-left: auto;
+    /* padding: 1rem; */
+  }
   .input-group {
     gap: 10px;
   }

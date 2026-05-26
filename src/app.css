@@ -315,6 +315,11 @@ button:hover {
   background: var(--button-background-hover, #444);
 }
 
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .container {
   margin: 0;
   padding: 2rem;
