@@ -393,12 +393,12 @@ button {
     background: #2f2f2f;
     --limit: #dedede;
     --radio-button-background: #444;
-    --slider-card-background: #2b2a2a98; /* #2b2a2a98 */
+    --slider-card-background: #242323; /* #2b2a2a98 previously now 282828*/
     --settings-modal-background: #2b2a2a;
     --home-box-shadow: rgba(0, 0, 0, 0.5);
     --button-background: #444;
-    --race-menu-background: #585858;
-    --race-menu-box-shadow: rgba(69, 69, 69, 0.616);
+    --race-menu-background: #515050;
+    --race-menu-box-shadow: rgba(27, 27, 27, 0.151);
     --race-menu-outline: #5959592c;
     --team-name-input-background: rgba(15, 15, 15, 0.800);
     --placeholder-color: rgba(255, 255, 255, 0.678);
@@ -416,10 +416,9 @@ button {
   button:active {
     background-color: #0f0f0f69;
   }
-/* 
-  .tab-button {
-    background: var(--settings-modal-background);
-  } */
+  .home-slider-card {
+    background: var(--slider-card-background);
+  }
 
 }
 

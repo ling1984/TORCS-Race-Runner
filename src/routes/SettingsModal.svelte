@@ -69,7 +69,7 @@
         </div>
         <div class="input-group">
           <input id="folder-input" autocomplete="off" placeholder="Enter or find path..." bind:value={folder_path} oninput={saveFolderPath}/>
-          <button onclick={pick_folder}>Find folder</button>
+          <button style="white-space: nowrap;" onclick={pick_folder}>Find folder</button>
         </div>
         {#if folder_path === '' && show_warning}
         <p style="color: var(--settings-warning);"> Please select a folder. </p>
