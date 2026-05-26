@@ -70,8 +70,3 @@
     closeSettings={() => settingsOpen = false}/>
 </div>
 
-<style>
-  .frontpage-button {
-    background: var(--button-background);
-  }
-</style>
