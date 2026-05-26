@@ -7,10 +7,10 @@
 </script>
 
 <div class="driver-grid">
-	{#each drivers as driver, i}
+	{#each drivers as driver}
 		<div class="driver-card">
-			<div class="driver-name" title={displayName(driver, i)}>
-				{displayName(driver, i)}
+			<div class="driver-name" title={displayName(driver, driver.index)}>
+				{displayName(driver, driver.index)}
 			</div>
 
 			<div class="divider"></div>

@@ -45,7 +45,7 @@
         console.log(JSON.stringify(teams, null, 2));
         msg = await invoke("start_race", {raceTeams: teams});
         race_running.set(true);
-        showAlert("Race started successfully! Now in the TORCS window navigate: Race -> Race -> New Race, ", "Success", "info");
+        showAlert("Race started successfully! In the TORCS window: Race -> Race -> New Race", "Success", "info");
       } catch (error) {
         msg = `Error: ${error}`;
         showAlert(`Failed to start race: ${error}`, "Error", "error");
@@ -64,17 +64,19 @@
 
   function setUpDrivers() {
     drivers = [];
+    let index = 0;
     race_teams.forEach((teamStore) => {
       const team = get(teamStore);
       if (team.script_path !== '') {
         drivers.push({
-          index: drivers.length,
+          index: index,
           team_name: team.name,
           state: 'waiting',
           port: ''
         });
       }
-      });
+      index++;
+    });
     console.log("Drivers set up:", drivers);
   };
 </script>

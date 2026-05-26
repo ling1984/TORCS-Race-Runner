@@ -39,9 +39,6 @@
       }
   }
   
-  // function resetCurrentTeam() {
-  //     current_team.update((team) => ({ ...team, name: "", logo_path: "", script_path: "" }));
-  // }
 
   let tab_team_names = ["Team 0", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"];
   let { msg } = $props();
