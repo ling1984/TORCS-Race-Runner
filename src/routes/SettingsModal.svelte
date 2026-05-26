@@ -63,7 +63,7 @@
         </button>
       </div>
       <div class="modal-content">
-        <div class="label-container" style="margin-bottom: 10px;">
+        <div class="label-container" style="margin-bottom: 10px; margin-top: 20px;">
           <span class="label settings-label">Path to IBM Race League folder</span>
           <span class="help-icon" data-tooltip="Find where the IBM Race League folder is on your device.">?</span>
         </div>
@@ -127,11 +127,12 @@
 
 
   .modal-header {
-    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
     padding: 20px;
-    font-size: 1.5em;
     border-bottom: 1px solid #a3a3a3bb;
-    margin-bottom: 20px;
   }
 
   .modal-content {
