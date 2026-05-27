@@ -63,19 +63,19 @@
         </button>
       </div>
       <div class="modal-content">
-        <div class="label-container" style="margin-bottom: 10px;">
-          <span class="label">Path to IBM Race League folder</span>
+        <div class="label-container" style="margin-bottom: 10px; margin-top: 20px;">
+          <span class="label settings-label">Path to IBM Race League folder</span>
           <span class="help-icon" data-tooltip="Find where the IBM Race League folder is on your device.">?</span>
         </div>
         <div class="input-group">
           <input id="folder-input" autocomplete="off" placeholder="Enter or find path..." bind:value={folder_path} oninput={saveFolderPath}/>
-          <button onclick={pick_folder}>Find folder</button>
+          <button style="white-space: nowrap;" onclick={pick_folder}>Find folder</button>
         </div>
         {#if folder_path === '' && show_warning}
-        <p style="color: red;"> Please select a folder. </p>
+        <p style="color: var(--settings-warning);"> Please select a folder. </p>
         {/if}
         <div class="label-container" style="margin-bottom: 10px; margin-top: 20px;">
-          <span class="label">Python alias</span>
+          <span class="label settings-label">Python alias</span>
           <span class="help-icon" data-tooltip="Enter the alias for your Python installation. Needs to be in PATH.">?</span>
         </div>
         <input id="python-input" autocomplete="off" placeholder="python" bind:value={python_alias} oninput={savePythonAlias}/>
@@ -87,6 +87,11 @@
 </div>
 
 <style>
+
+  .settings-label {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
 
   .close-btn{
     box-shadow: 0 4px 6px var(--home-box-shadow);
@@ -122,11 +127,12 @@
 
 
   .modal-header {
-    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
     padding: 20px;
-    font-size: 1.5em;
     border-bottom: 1px solid #a3a3a3bb;
-    margin-bottom: 20px;
   }
 
   .modal-content {

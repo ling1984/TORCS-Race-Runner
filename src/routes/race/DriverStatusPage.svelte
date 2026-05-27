@@ -7,10 +7,10 @@
 </script>
 
 <div class="driver-grid">
-	{#each drivers as driver, i}
+	{#each drivers as driver}
 		<div class="driver-card">
-			<div class="driver-name" title={displayName(driver, i)}>
-				{displayName(driver, i)}
+			<div class="driver-name" title={displayName(driver, driver.index)}>
+				{displayName(driver, driver.index)}
 			</div>
 
 			<div class="divider"></div>
@@ -55,7 +55,7 @@
 		/* background: var(--slider-card-background, #f6f6f6); */
 		border: 2px solid var(--race-menu-outline);
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-		background: var(--button-background);
+		background: var(--slider-card-background);
 		font-size: 1.3rem;
 		min-height: 72px;
 	}
