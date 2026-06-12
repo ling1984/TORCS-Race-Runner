@@ -1,5 +1,5 @@
 use image::imageops::FilterType;
-use std::path::PathBuf;
+use std::path::Path;
 
 use image::DynamicImage;
 use image_extras::sgi::SgiDecoder;
@@ -8,7 +8,7 @@ use std::io::BufReader;
 
 use crate::sgi_encoder;
 
-pub fn overlay_car_logo(car_index: u32, image_path: &str, exe_dir: &PathBuf) -> Result<(), String> {
+pub fn overlay_car_logo(car_index: u32, image_path: &str, exe_dir: &Path) -> Result<(), String> {
     let base_dir = exe_dir
         .join("torcs")
         .join("drivers")
@@ -63,7 +63,7 @@ pub fn overlay_car_logo(car_index: u32, image_path: &str, exe_dir: &PathBuf) -> 
     Ok(())
 }
 
-pub fn reset_car_logo(car_index: u32, exe_dir: &PathBuf) -> Result<(), String> {
+pub fn reset_car_logo(car_index: u32, exe_dir: &Path) -> Result<(), String> {
     let base_dir = exe_dir
         .join("torcs")
         .join("drivers")

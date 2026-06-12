@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "RaceRunner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "identifier": "com.racerunner.app",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -18,7 +18,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost",
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost",
       "assetProtocol": {
         "enable": true,
         "scope": ["**"]

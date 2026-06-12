@@ -4,6 +4,26 @@ This app was created to be used in IBM AI Race League hackathons. It was created
 
 It uses Rust Tauri + Svelte Typescript.
 
+## Screenshots
+
+#### Frontpage
+![Frontpage-image](readme/Front-page.png)
+
+#### Settings
+![Settings-image](readme/Settings.png)
+
+#### Practice
+![Practice-image](readme/Practice.png)
+
+#### Race
+![Race-menu-image](readme/Race-menu.png)
+
+![Race-status-image](readme/Race-status.png)
+
+#### Banner
+
+![Banner-image](readme/Banner.png)
+
 ## Testing
 
 We use automated regression testing with Playwright.

@@ -95,9 +95,12 @@ async fn start_scripts(
         .get("python_alias")
         .and_then(|v| v.as_str().map(|s| s.to_string()))
         .unwrap_or_else(|| "python".to_string());
-    if python_alias == "" {
+    if python_alias.is_empty() {
         python_alias = "python".to_string();
     }
+
+    #[cfg(windows)]
+    const CREATE_NO_WINDOW: u32 = 0x08000000;
 
     // Handling race state and locking children mutex to push new children to it.
     let race_state = app.state::<RaceState>();
@@ -118,16 +121,21 @@ async fn start_scripts(
         if *race_state.is_running.lock().await {
             // Without this {}, it is possible to start a process -> stop the race (kill children) -> add process to children
             // therefore leaving the process alive when it shouldn't be
-
             {
                 let mut race_children = race_state.children.lock().await;
-                let mut child = Command::new(&python_alias)
-                    .arg("-u") // unbuffered output
+                let mut cmd = Command::new(&python_alias);
+
+                cmd.arg("-u") // unbuffered output
                     .arg(&team.script_path)
                     .arg("--port")
                     .arg((3001 + index).to_string()) // assign ports 3001, 3002, ... to drivers
-                    .stdout(Stdio::piped())
-                    .spawn()
+                    .stdout(Stdio::piped());
+
+                // If on windows, do not create a window when running the script
+                #[cfg(windows)]
+                cmd.creation_flags(CREATE_NO_WINDOW);
+
+                let mut child = cmd.spawn()
                     .map_err(|e| format!("Failed to start driver script for team {index}: {e}"))?;
 
                 stdout = child.stdout.take().ok_or("Failed to get stdout")?;
@@ -150,7 +158,7 @@ async fn start_scripts(
                 let _ = app.emit(
                     "driver-status",
                     RaceDriverStatus {
-                        index: index,
+                        index,
                         team_name: race_teams[index].name.clone(),
                         state: "connecting".into(),
                         port,
@@ -165,7 +173,7 @@ async fn start_scripts(
                 let _ = app.emit(
                     "driver-status",
                     RaceDriverStatus {
-                        index: index,
+                        index,
                         team_name: race_teams[index].name.clone(),
                         state: "connected".into(),
                         port,
