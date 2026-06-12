@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+#[cfg(windows)]
+use std::os::windows::process::CommandExt;
 use std::{
     path::PathBuf, process::{Child, Command}, sync::Mutex
 };
@@ -99,15 +101,23 @@ pub fn start_practice(state: State<PracticeDriverState>, app: tauri::AppHandle) 
         .get("python_alias")
         .and_then(|v| v.as_str().map(|s| s.to_string()))
         .unwrap_or_else(|| "python".to_string());
-    if python_alias == "" {
+    if python_alias.is_empty() {
         python_alias = "python".to_string();
     }
 
-    let child = Command::new(&python_alias)
-        .arg(&driver_script_path)
+    #[cfg(windows)]
+    const CREATE_NO_WINDOW: u32 = 0x08000000;
+
+    let mut cmd = Command::new(&python_alias);
+    cmd.arg(&driver_script_path)
         .arg("--parameters")
-        .arg(&params_json)
-        .spawn()
+        .arg(&params_json);
+
+    // If on windows, do not create a window when running the script
+    #[cfg(windows)]
+    cmd.creation_flags(CREATE_NO_WINDOW);
+
+    let child = cmd.spawn()
         .map_err(|e| e.to_string())?;
 
     *driver_guard = Some(child);
